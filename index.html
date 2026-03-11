@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>計算ストライクゲーム</title>
+<title>計算野球ゲーム</title>
 
 <style>
 
@@ -40,8 +40,10 @@ justify-content:center;
 cursor:pointer;
 }
 
-.cell:hover{
-background:#ddd;
+button{
+font-size:18px;
+padding:10px 20px;
+margin:5px;
 }
 
 </style>
@@ -49,13 +51,15 @@ background:#ddd;
 
 <body>
 
-<h2>計算ストライクゲーム</h2>
+<h2>計算野球ゲーム ⚾</h2>
+
+<div id="modeSelect">
+<button onclick="startGame('batter')">バッターモード</button>
+</div>
 
 <div id="question"></div>
 <div id="status"></div>
-
 <div class="grid" id="grid"></div>
-
 <div id="result"></div>
 
 <script>
@@ -63,14 +67,33 @@ background:#ddd;
 let correctAnswer
 let startTime
 
-let strikeStreak=0
-let strikeCount6=0
-let ballCount6=0
-let questionWindow=0
+let windowQuestion=0
+let wrongCount=0
+let windowStart
 
+let totalWrong=0
 let outs=0
-let ballSetCount=0
-let strikeSetCount=0
+
+let homerun=0
+let doubleHit=0
+let singleHit=0
+
+function startGame(){
+
+document.getElementById("modeSelect").style.display="none"
+
+resetWindow()
+newQuestion()
+
+}
+
+function resetWindow(){
+
+windowQuestion=0
+wrongCount=0
+windowStart=Date.now()
+
+}
 
 function newQuestion(){
 
@@ -123,29 +146,16 @@ grid.appendChild(div)
 
 function answer(num){
 
-let time=(Date.now()-startTime)/1000
+windowQuestion++
 
-let result=""
+if(num!=correctAnswer){
 
-questionWindow++
+wrongCount++
+totalWrong++
 
-if(num==correctAnswer && time<=1.5){
-
-result="ストライク"
-
-strikeStreak++
-strikeCount6++
-
-}else{
-
-result="ボール"
-
-strikeStreak=0
-ballCount6++
+document.getElementById("status").innerText="ストライク"
 
 }
-
-document.getElementById("status").innerText=result+" ("+time.toFixed(2)+"秒)"
 
 checkRules()
 
@@ -153,71 +163,84 @@ checkRules()
 
 function checkRules(){
 
-// 9連続ストライク
-if(strikeStreak>=9){
+// 9ミス → ゲームオーバー
+if(totalWrong>=9){
 
-finish("3アウト！クリア！")
+finish("3アウト！ゲームオーバー")
 return
 
 }
 
-// 3連続ストライク
-if(strikeStreak>=3){
+// 6問以内3ミス → 1アウト
+if(wrongCount>=3){
 
 outs++
+
+document.getElementById("status").innerText="1アウト"
+
 resetWindow()
 
 }
 
-// 6問以内3ストライク
-if(strikeCount6>=3){
+// 6問終了
+if(windowQuestion>=6){
 
-strikeSetCount++
-outs++
+let time=(Date.now()-windowStart)/1000
+
+let message=""
+
+if(wrongCount==0){
+
+if(time<=7){
+
+message="HOME RUN！"
+homerun++
+
+}else if(time<=9){
+
+message="2BASE hit"
+doubleHit++
+
+}
+
+}
+
+if(wrongCount<=2){
+
+if(time<=8){
+
+message="hit"
+singleHit++
+
+}else if(time<=10){
+
+message="four balls"
+singleHit++
+
+}
+
+}
+
+document.getElementById("status").innerText=message+" "+time.toFixed(2)+"秒"
+
 resetWindow()
 
 }
 
-// 6問以内4ボール
-if(ballCount6>=4){
+// クリア判定
+if(
+homerun>=1 ||
+doubleHit>=2 ||
+(doubleHit>=1 && singleHit>=2) ||
+singleHit>=4
+){
 
-ballSetCount++
-resetWindow()
-
-}
-
-// クリア
-if(strikeSetCount>=3){
-
-finish("3アウト！クリア！")
+finish("クリア！！")
 return
-
-}
-
-// ゲームオーバー
-if(ballSetCount>=4){
-
-finish("ゲームオーバー")
-return
-
-}
-
-// 6問終了リセット
-if(questionWindow>=6){
-
-resetWindow()
 
 }
 
 newQuestion()
-
-}
-
-function resetWindow(){
-
-questionWindow=0
-strikeCount6=0
-ballCount6=0
 
 }
 
@@ -225,10 +248,9 @@ function finish(msg){
 
 document.getElementById("result").innerText=msg
 document.getElementById("grid").innerHTML=""
+document.getElementById("question").innerText=""
 
 }
-
-newQuestion()
 
 </script>
 
