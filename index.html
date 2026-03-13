@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>野球ゲーム</title>
+<title>計算野球ゲーム</title>
 
 <style>
 
@@ -14,41 +14,33 @@ background:#f5f5f5;
 
 #judge{
 font-size:38px;
-color:red;
 height:50px;
-margin-top:10px;
-}
-
-.centerArea{
-display:flex;
-justify-content:center;
-align-items:center;
-margin-top:20px;
-}
-
-.boardArea{
-display:flex;
-flex-direction:column;
-align-items:center;
+color:red;
 }
 
 #question{
-font-size:42px;
-margin-bottom:15px;
+font-size:40px;
+margin-bottom:10px;
+}
+
+.game{
+display:flex;
+justify-content:center;
+gap:40px;
 }
 
 .grid{
 display:grid;
-grid-template-columns:repeat(3,110px);
-gap:12px;
+grid-template-columns:repeat(3,100px);
+gap:10px;
 }
 
 .cell{
-width:110px;
-height:110px;
+width:100px;
+height:100px;
 background:white;
-border-radius:12px;
-font-size:34px;
+border-radius:10px;
+font-size:32px;
 display:flex;
 align-items:center;
 justify-content:center;
@@ -64,35 +56,19 @@ font-size:48px;
 .correct{color:red}
 .wrong{color:blue}
 
-.bsoArea{
-margin-left:40px;
-text-align:left;
-font-size:22px;
-}
-
-.bsoRow{
-display:flex;
-align-items:center;
-margin:6px 0;
-}
-
 .light{
-width:22px;
-height:22px;
+display:inline-block;
+width:20px;
+height:20px;
 border-radius:50%;
 background:#ddd;
-margin-left:5px;
+margin:3px;
 }
 
 button{
-font-size:18px;
-padding:8px 18px;
-margin:8px;
-}
-
-select,input{
-font-size:16px;
-margin:5px;
+font-size:20px;
+padding:10px 20px;
+margin:10px;
 }
 
 </style>
@@ -102,68 +78,31 @@ margin:5px;
 
 <h2>計算野球ゲーム ⚾</h2>
 
-<div id="menu">
-
-<div>
-モード
-<select id="mode">
-<option value="pitcher">ピッチャー</option>
-<option value="batter">バッター</option>
-</select>
-</div>
-
-<div>
-演算
-<select id="operator">
-<option value="+">＋</option>
-<option value="-">−</option>
-<option value="*">×</option>
-<option value="/">÷</option>
-</select>
-</div>
-
-<div>
-数字設定
-<select id="numberMode">
-<option value="random">ランダム</option>
-<option value="fixed">数字固定</option>
-</select>
-
-<input type="number" id="fixedNumber" min="1" max="99" value="5">
-</div>
-
 <button onclick="playBall()">プレイボール</button>
 
-</div>
-
 <div id="judge"></div>
-
-<div class="centerArea" style="display:none" id="gameArea">
-
-<div class="boardArea">
-
 <div id="question"></div>
+
+<div class="game">
 
 <div class="grid" id="grid"></div>
 
+<div>
+
+<div>B
+<span class="light" id="b1"></span>
+<span class="light" id="b2"></span>
+<span class="light" id="b3"></span>
 </div>
 
-<div class="bsoArea">
-
-<div class="bsoRow">B
-<div class="light" id="b1"></div>
-<div class="light" id="b2"></div>
-<div class="light" id="b3"></div>
+<div>S
+<span class="light" id="s1"></span>
+<span class="light" id="s2"></span>
 </div>
 
-<div class="bsoRow">S
-<div class="light" id="s1"></div>
-<div class="light" id="s2"></div>
-</div>
-
-<div class="bsoRow">O
-<div class="light" id="o1"></div>
-<div class="light" id="o2"></div>
+<div>O
+<span class="light" id="o1"></span>
+<span class="light" id="o2"></span>
 </div>
 
 </div>
@@ -174,82 +113,44 @@ margin:5px;
 
 <script>
 
-let mode
-let operator
-let numberMode
-let fixedNumber
-
 let correctAnswer
 let startTime
 
 let strike=0
 let ball=0
-let out=0
-let strikeOut=0
 let hit=0
+let strikeOut=0
 let fourBalls=0
 let questionCount=0
 
 function playBall(){
 
-mode=document.getElementById("mode").value
-operator=document.getElementById("operator").value
-numberMode=document.getElementById("numberMode").value
-fixedNumber=parseInt(document.getElementById("fixedNumber").value)
-
-document.getElementById("menu").style.display="none"
-document.getElementById("gameArea").style.display="flex"
-document.getElementById("result").innerHTML=""
-
-resetCounts()
-
+resetGame()
 newQuestion()
 
 }
 
-function resetCounts(){
+function resetGame(){
 
 strike=0
 ball=0
-out=0
 hit=0
-fourBalls=0
 strikeOut=0
+fourBalls=0
 questionCount=0
+
 updateBSO()
 
 }
 
 function newQuestion(){
 
-let a,b
+let a=Math.floor(Math.random()*10)
+let b=Math.floor(Math.random()*10)
 
-if(numberMode=="fixed"){
+correctAnswer=a+b
 
-a=fixedNumber
-b=Math.floor(Math.random()*10)+1
-
-}else{
-
-a=Math.floor(Math.random()*10)+1
-b=Math.floor(Math.random()*10)+1
-
-}
-
-let text
-
-if(operator=="+") correctAnswer=a+b
-if(operator=="-") correctAnswer=a-b
-if(operator=="*") correctAnswer=a*b
-if(operator=="/"){
-correctAnswer=a
-b=Math.floor(Math.random()*9)+1
-a=correctAnswer*b
-}
-
-text=a+" "+operator+" "+b
-
-document.getElementById("question").innerText=text
+document.getElementById("question").innerText=a+" + "+b
 
 createGrid()
 
@@ -266,7 +167,7 @@ let nums=[]
 
 while(nums.length<8){
 
-let n=Math.floor(Math.random()*100)
+let n=Math.floor(Math.random()*19)
 
 if(n!=correctAnswer && !nums.includes(n)) nums.push(n)
 
@@ -280,7 +181,6 @@ nums.forEach(n=>{
 let d=document.createElement("div")
 d.className="cell"
 d.innerText=n
-
 d.onclick=()=>answer(d,n)
 
 grid.appendChild(d)
@@ -294,13 +194,16 @@ function answer(cell,n){
 let time=(Date.now()-startTime)/1000
 
 if(n==correctAnswer){
+
 showMark(cell,"◯","correct")
+
 }else{
+
 showMark(cell,"×","wrong")
+
 }
 
-if(mode=="pitcher") pitcherJudge(n,time)
-else batterJudge(n,time)
+pitcherJudge(n,time)
 
 setTimeout(newQuestion,600)
 
@@ -315,6 +218,95 @@ cell.appendChild(m)
 
 }
 
+function pitcherJudge(n,time){
+
+questionCount++
+
+if(time>=2 && n!=correctAnswer){
+
+showJudge("HOME RUN")
+
+gameOver()
+return
+
+}
+
+if(n==correctAnswer && time<=1.2){
+
+strike++
+showJudge("STRIKE")
+
+}
+
+else if(n==correctAnswer && time>1.2 && time<=2){
+
+ball++
+showJudge("BALL")
+
+}
+
+else{
+
+hit++
+showJudge("HIT")
+
+}
+
+updateBSO()
+
+if(strike>=3){
+
+strikeOut++
+showJudge("STRIKE OUT")
+
+strike=0
+ball=0
+questionCount=0
+
+}
+
+if(ball>=4){
+
+fourBalls++
+showJudge("FOUR BALLS")
+
+strike=0
+ball=0
+questionCount=0
+
+}
+
+if(hit>=4){
+
+gameOver()
+return
+
+}
+
+if(hit+fourBalls>=4){
+
+gameOver()
+return
+
+}
+
+if(strikeOut>=3){
+
+clearGame()
+return
+
+}
+
+if(questionCount>=6){
+
+strike=0
+ball=0
+questionCount=0
+
+}
+
+}
+
 function showJudge(text){
 
 document.getElementById("judge").innerText=text
@@ -322,81 +314,6 @@ document.getElementById("judge").innerText=text
 setTimeout(()=>{
 document.getElementById("judge").innerText=""
 },800)
-
-}
-
-function pitcherJudge(n,time){
-
-questionCount++
-
-if(time>=2 && n!=correctAnswer){
-showJudge("HOME RUN")
-gameOver()
-return
-}
-
-if(n==correctAnswer && time<=1.2){
-strike++
-showJudge("STRIKE")
-}
-
-else if(n==correctAnswer && time<=2){
-ball++
-showJudge("BALL")
-}
-
-else{
-hit++
-showJudge("HIT")
-}
-
-updateBSO()
-
-if(strike>=3){
-strikeOut++
-out++
-showJudge("STRIKE OUT")
-strike=0
-ball=0
-questionCount=0
-
-updateBSO()   //
-
-}
-
-if(ball>=4){
-fourBalls++
-showJudge("FOUR BALLS")
-strike=0
-ball=0
-questionCount=0
-}
-
-if(hit>=4 || hit+fourBalls>=4){
-gameOver()
-return
-}
-
-if(strikeOut>=3){
-clearGame()
-return
-}
-
-if(questionCount>=6){
-strike=0
-ball=0
-questionCount=0
-}
-
-}
-
-function batterJudge(n,time){
-
-if(n==correctAnswer){
-showJudge("HIT")
-}else{
-showJudge("STRIKE")
-}
 
 }
 
@@ -410,41 +327,39 @@ b.forEach(x=>x.style.background="#ddd")
 s.forEach(x=>x.style.background="#ddd")
 o.forEach(x=>x.style.background="#ddd")
 
-for(let i=0;i<ball && i<3;i++) b[i].style.background="green"
-for(let i=0;i<strike && i<2;i++) s[i].style.background="orange"
-for(let i=0;i<out && i<2;i++) o[i].style.background="red"
+for(let i=0;i<ball && i<3;i++){
+
+b[i].style.background="green"
+
+}
+
+for(let i=0;i<strike && i<2;i++){
+
+s[i].style.background="orange"
+
+}
+
+for(let i=0;i<strikeOut && i<2;i++){
+
+o[i].style.background="red"
+
+}
 
 }
 
 function gameOver(){
 
 document.getElementById("result").innerHTML=
-"<h2>GAME OVER</h2>\
-<button onclick='resetGame()'>ゲームセット</button>\
-<button onclick='nextInning()'>次のイニング</button>"
+
+"<h2>GAME OVER</h2><button onclick='location.reload()'>ピッチャー交代</button>"
 
 }
 
 function clearGame(){
 
 document.getElementById("result").innerHTML=
-"<h2>クリア！</h2>\
-<button onclick='resetGame()'>ゲームセット</button>\
-<button onclick='nextInning()'>次のイニング</button>"
 
-}
-
-function resetGame(){
-
-location.reload()
-
-}
-
-function nextInning(){
-
-document.getElementById("result").innerHTML=""
-resetCounts()
-newQuestion()
+"<h2>クリア！</h2><button onclick='location.reload()'>次のイニング</button>"
 
 }
 
