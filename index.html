@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>⚾ピッチャー vs バッター</title>
+<title>⚾ピッチャー計算ゲーム</title>
 
 <style>
 
@@ -23,7 +23,7 @@ margin:20px;
 .cell{
 border:2px solid #333;
 height:90px;
-font-size:40px;
+font-size:36px;
 display:flex;
 align-items:center;
 justify-content:center;
@@ -37,13 +37,12 @@ cursor:pointer;
 .wrong{background:#ff8a8a;}
 
 #question{
-font-size:28px;
+font-size:30px;
 margin:20px;
 }
 
-#spelling{
-font-size:26px;
-letter-spacing:6px;
+#info{
+font-size:20px;
 margin:10px;
 }
 
@@ -52,17 +51,7 @@ margin:10px;
 
 <body>
 
-<h1>⚾ ピッチャー vs バッター</h1>
-
-モード
-<select id="mode">
-<option value="pitcher">ピッチャー（計算）</option>
-<option value="upper">バッター（大文字）</option>
-<option value="lower">バッター（小文字）</option>
-<option value="word">バッター（英単語）</option>
-</select>
-
-<br><br>
+<h1>⚾ ピッチャー計算ゲーム</h1>
 
 計算
 <select id="operator">
@@ -72,15 +61,16 @@ margin:10px;
 <option value="/">÷</option>
 </select>
 
-数
+基の数
 <select id="base"></select>
 
 <br><br>
 
 <button onclick="startGame()">プレイ</button>
 
+<div id="info"></div>
+
 <div id="question"></div>
-<div id="spelling"></div>
 
 <div class="grid" id="grid"></div>
 
@@ -89,82 +79,61 @@ margin:10px;
 <script>
 
 let answer=""
-let input=""
+let startTime
+
+let strike=0
+let ball=0
+let out=0
+let hit=0
+
+let pitchCount=0
+let totalQuestions=0
 
 for(let i=1;i<=9;i++){
-let opt=document.createElement("option")
-opt.value=i
-opt.textContent=i
-document.getElementById("base").appendChild(opt)
+let o=document.createElement("option")
+o.value=i
+o.textContent=i
+document.getElementById("base").appendChild(o)
 }
-
-const words=[
-{word:"lesson",jp:"授業"},
-{word:"book",jp:"本"},
-{word:"true",jp:"真"},
-{word:"false",jp:"偽"},
-{word:"boolean",jp:"真偽値"}
-{word:"number",jp:"番号"}
-{word:"sound",jp:"音"}
-{word:"color",jp:"色"},
-{word:"red",jp:"赤"},
-{word:"green",jp:"緑"},
-{word:"blue",jp:"青"},
-{word:"white",jp:"白"}
-{word:"black",jp:"黒"}
-{word:"yellow",jp:"黄色"}
-{word:"count",jp:"数える"},
-{word:"up",jp:"上がる"},
-{word:"down",jp:"下る"},
-{word:"line",jp:"線"},
-{word:"trace",jp:"なぞる・跡"}
-{word:"run",jp:"走る"}
-{word:"wait",jp:"待つ"}
-{word:"touch",jp:"触れる"},
-{word:"stop",jp:"停止"},
-{word:"turn",jp:"回る"},
-{word:"return",jp:"返す"},
-{word:"random",jp:"乱数"}
-{word:"write",jp:"書く"}
-{word:"task",jp:"課題"}
-{word:"work",jp:"作業"},
-{word:"misson",jp:"任務"},
-{word:"move",jp:"動く"},
-{word:"speed",jp:"速さ"},
-{word:"rotations",jp:"回転数"}
-{word:"degrees",jp:"角度"}
-{word:"left",jp:"左"}
-{word:"right",jp:"右"},
-{word:"center",jp:"中央"},
-{word:"pressed",jp:"押す"},
-{word:"released",jp:"離れる"},
-{word:"print",jp:"印刷"}
-{word:"forward",jp:"前方"}
-{word:"backward",jp:"後方"}
-{word:"get",jp:"得る"},
-{word:"time",jp:"時間"},
-{word:"motor",jp:"モーター"},
-{word:"sensor",jp:"センサー"},
-{word:"pair",jp:"一対"},
-{word:"if",jp:"もし"}
-{word:"distance",jp:"距離"}
-{word:"force",jp:"力"}
-{word:"pass",jp:"過ぎ去る"}
-{word:"input",jp:"入力"}
-]
 
 function startGame(){
 
-input=""
+strike=0
+ball=0
+pitchCount=0
+
 document.getElementById("result").innerText=""
-document.getElementById("spelling").innerText=""
 
-const mode=document.getElementById("mode").value
+nextPitch()
 
-if(mode=="pitcher") createMath()
-if(mode=="upper") createUpper()
-if(mode=="lower") createLower()
-if(mode=="word") createWord()
+}
+
+function nextPitch(){
+
+if(out>=3){
+document.getElementById("question").innerText="🎉 クリア！"
+return
+}
+
+if(hit>=4){
+document.getElementById("question").innerText="💀 ゲームオーバー"
+return
+}
+
+if(pitchCount>=7){
+startGame()
+return
+}
+
+if(totalQuestions>=42){
+document.getElementById("question").innerText="終了"
+return
+}
+
+pitchCount++
+totalQuestions++
+
+createMath()
 
 }
 
@@ -177,194 +146,126 @@ let x=Math.floor(Math.random()*9)+1
 
 if(op=="+"){
 answer=x
-let result=base+x
-document.getElementById("question").innerText=
-base+" + □ = "+result
+q=base+" + □ = "+(base+x)
 }
 
 if(op=="-"){
 answer=x
-let result=base-x
-document.getElementById("question").innerText=
-base+" − □ = "+result
+q=base+" − □ = "+(base-x)
 }
 
 if(op=="*"){
 answer=x
-let result=base*x
-document.getElementById("question").innerText=
-base+" × □ = "+result
+q=base+" × □ = "+(base*x)
 }
 
 if(op=="/"){
 answer=x
-let result=base/x
-document.getElementById("question").innerText=
-base+" ÷ □ = "+result
+q=base+" ÷ □ = "+(base/x)
 }
 
-answer=answer.toString()
+document.getElementById("question").innerText=q
+
+drawGrid()
+
+startTime=Date.now()
+
+updateInfo()
+
+}
+
+function updateInfo(){
+
+document.getElementById("info").innerText=
+"ストライク:"+strike+
+" ボール:"+ball+
+" アウト:"+out+
+" ヒット:"+hit
+
+}
+
+function drawGrid(){
+
+const grid=document.getElementById("grid")
+grid.innerHTML=""
 
 let nums=[]
 
 while(nums.length<8){
-nums.push((Math.floor(Math.random()*9)+1).toString())
+nums.push(Math.floor(Math.random()*9)+1)
 }
 
 nums.push(answer)
 
 nums=nums.sort(()=>Math.random()-0.5)
 
-drawGrid(nums,checkMath)
+nums.forEach(v=>{
 
-}
-
-function checkMath(v,cell){
-
-if(v==answer){
-cell.classList.add("correct")
-document.getElementById("result").innerText="ストライク！"
-}else{
-cell.classList.add("wrong")
-document.getElementById("result").innerText="ボール"
-}
-
-setTimeout(startGame,1000)
-
-}
-
-function createUpper(){
-
-const lower="abcdefghijklmnopqrstuvwxyz"
-const upper="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-let i=Math.floor(Math.random()*26)
-
-answer=upper[i]
-
-document.getElementById("question").innerText=
-"大文字を選べ → "+lower[i]
-
-let list=upper.split("").sort(()=>Math.random()-0.5).slice(0,8)
-
-list.push(answer)
-list=list.sort(()=>Math.random()-0.5)
-
-drawGrid(list,checkLetter)
-
-}
-
-function createLower(){
-
-const lower="abcdefghijklmnopqrstuvwxyz"
-const upper="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-
-let i=Math.floor(Math.random()*26)
-
-answer=lower[i]
-
-document.getElementById("question").innerText=
-"小文字を選べ → "+upper[i]
-
-let list=lower.split("").sort(()=>Math.random()-0.5).slice(0,8)
-
-list.push(answer)
-list=list.sort(()=>Math.random()-0.5)
-
-drawGrid(list,checkLetter)
-
-}
-
-function checkLetter(v,cell){
-
-if(v==answer){
-cell.classList.add("correct")
-document.getElementById("result").innerText="ヒット！"
-}else{
-cell.classList.add("wrong")
-document.getElementById("result").innerText="アウト"
-}
-
-setTimeout(startGame,1000)
-
-}
-
-function createWord(){
-
-const obj=words[Math.floor(Math.random()*words.length)]
-
-answer=obj.word
-input=""
-
-document.getElementById("question").innerText=
-"この意味の英単語 → "+obj.jp
-
-updateSpelling()
-
-let letters=answer.split("")
-
-const alphabet="abcdefghijklmnopqrstuvwxyz"
-
-while(letters.length<9){
-letters.push(alphabet[Math.floor(Math.random()*26)])
-}
-
-letters=letters.sort(()=>Math.random()-0.5)
-
-drawGrid(letters,checkWord)
-
-}
-
-function updateSpelling(){
-
-let display=""
-
-for(let i=0;i<answer.length;i++){
-
-if(i<input.length) display+=input[i]+" "
-else display+="_ "
-
-}
-
-document.getElementById("spelling").innerText=display
-
-}
-
-function checkWord(v,cell){
-
-input+=v
-updateSpelling()
-
-if(input.length>=answer.length){
-
-if(input==answer){
-document.getElementById("result").innerText="ホームラン！"
-}else{
-document.getElementById("result").innerText="アウト"
-}
-
-setTimeout(startGame,1200)
-
-}
-
-}
-
-function drawGrid(list,callback){
-
-const grid=document.getElementById("grid")
-grid.innerHTML=""
-
-list.forEach(v=>{
-
-const div=document.createElement("div")
+let div=document.createElement("div")
 div.className="cell"
 div.textContent=v
 
-div.onclick=()=>callback(v,div)
+div.onclick=()=>check(v,div)
 
 grid.appendChild(div)
 
 })
+
+}
+
+function check(v,cell){
+
+let time=(Date.now()-startTime)/1000
+
+if(v==answer){
+
+if(time<=1.2){
+
+strike++
+cell.classList.add("correct")
+document.getElementById("result").innerText="ストライク！"
+
+}else{
+
+ball++
+cell.classList.add("correct")
+document.getElementById("result").innerText="ボール"
+
+}
+
+}else{
+
+hit++
+cell.classList.add("wrong")
+document.getElementById("result").innerText="ヒット！"
+
+}
+
+judge()
+
+setTimeout(nextPitch,800)
+
+}
+
+function judge(){
+
+if(strike>=3){
+
+out++
+document.getElementById("result").innerText="アウト！"
+pitchCount=7
+
+}
+
+if(ball>=4){
+
+hit++
+document.getElementById("result").innerText="フォアボール"
+pitchCount=7
+
+}
+
+updateInfo()
 
 }
 
