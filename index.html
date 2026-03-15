@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>⚾ 九九ピッチャーゲーム</title>
+<title>⚾ 計算ピッチャーゲーム</title>
 
 <style>
 
@@ -23,7 +23,7 @@ margin:20px;
 .cell{
 border:2px solid #333;
 height:90px;
-font-size:36px;
+font-size:34px;
 display:flex;
 align-items:center;
 justify-content:center;
@@ -51,7 +51,15 @@ margin:10px;
 
 <body>
 
-<h1>⚾ 九九ピッチャーゲーム</h1>
+<h1>⚾ 計算ピッチャーゲーム</h1>
+
+計算
+<select id="operator">
+<option value="+">＋</option>
+<option value="-">−</option>
+<option value="*">×</option>
+<option value="/">÷</option>
+</select>
 
 基の数
 <select id="base"></select>
@@ -132,13 +140,41 @@ createProblem()
 function createProblem(){
 
 const base=parseInt(document.getElementById("base").value)
+const op=document.getElementById("operator").value
 
 let n=Math.floor(Math.random()*9)+1
 
-answer=base*n
+if(op=="+"){
 
-document.getElementById("question").innerText=
-base+" × "+n
+answer=base+n
+question=base+" + "+n
+
+}
+
+if(op=="-"){
+
+answer=base-n
+question=base+" − "+n
+
+}
+
+if(op=="*"){
+
+answer=base*n
+question=base+" × "+n
+
+}
+
+if(op=="/"){
+
+answer=n
+let numerator=base*n
+
+question=numerator+" ÷ "+base
+
+}
+
+document.getElementById("question").innerText=question
 
 drawGrid()
 
@@ -187,7 +223,7 @@ let time=(Date.now()-startTime)/1000
 
 if(v==answer){
 
-if(time<=1.2){
+if(time<=2){
 
 strike++
 cell.classList.add("correct")
