@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>⚾ピッチャー計算ゲーム</title>
+<title>⚾ 九九ピッチャーゲーム</title>
 
 <style>
 
@@ -37,7 +37,7 @@ cursor:pointer;
 .wrong{background:#ff8a8a;}
 
 #question{
-font-size:30px;
+font-size:36px;
 margin:20px;
 }
 
@@ -51,15 +51,7 @@ margin:10px;
 
 <body>
 
-<h1>⚾ ピッチャー計算ゲーム</h1>
-
-計算
-<select id="operator">
-<option value="+">＋</option>
-<option value="-">−</option>
-<option value="*">×</option>
-<option value="/">÷</option>
-</select>
+<h1>⚾ 九九ピッチャーゲーム</h1>
 
 基の数
 <select id="base"></select>
@@ -78,7 +70,7 @@ margin:10px;
 
 <script>
 
-let answer=""
+let answer
 let startTime
 
 let strike=0
@@ -87,13 +79,13 @@ let out=0
 let hit=0
 
 let pitchCount=0
-let totalQuestions=0
+let total=0
 
 for(let i=1;i<=9;i++){
-let o=document.createElement("option")
-o.value=i
-o.textContent=i
-document.getElementById("base").appendChild(o)
+let opt=document.createElement("option")
+opt.value=i
+opt.textContent=i
+document.getElementById("base").appendChild(opt)
 }
 
 function startGame(){
@@ -125,62 +117,34 @@ startGame()
 return
 }
 
-if(totalQuestions>=42){
+if(total>=42){
 document.getElementById("question").innerText="終了"
 return
 }
 
 pitchCount++
-totalQuestions++
+total++
 
-createMath()
+createProblem()
 
 }
 
-function createMath(){
+function createProblem(){
 
-const op=document.getElementById("operator").value
 const base=parseInt(document.getElementById("base").value)
 
-let x=Math.floor(Math.random()*9)+1
+let n=Math.floor(Math.random()*9)+1
 
-if(op=="+"){
-answer=x
-q=base+" + □ = "+(base+x)
-}
+answer=base*n
 
-if(op=="-"){
-answer=x
-q=base+" − □ = "+(base-x)
-}
-
-if(op=="*"){
-answer=x
-q=base+" × □ = "+(base*x)
-}
-
-if(op=="/"){
-answer=x
-q=base+" ÷ □ = "+(base/x)
-}
-
-document.getElementById("question").innerText=q
+document.getElementById("question").innerText=
+base+" × "+n
 
 drawGrid()
 
 startTime=Date.now()
 
 updateInfo()
-
-}
-
-function updateInfo(){
-
-document.getElementById("info").innerText=
-"ストライク:"+strike+
-" ボール:"+ball+
-" アウト:"+out+
-" ヒット:"+hit
 
 }
 
@@ -192,7 +156,11 @@ grid.innerHTML=""
 let nums=[]
 
 while(nums.length<8){
-nums.push(Math.floor(Math.random()*9)+1)
+
+let r=Math.floor(Math.random()*81)+1
+
+if(!nums.includes(r)) nums.push(r)
+
 }
 
 nums.push(answer)
@@ -266,6 +234,16 @@ pitchCount=7
 }
 
 updateInfo()
+
+}
+
+function updateInfo(){
+
+document.getElementById("info").innerText=
+"ストライク:"+strike+
+" ボール:"+ball+
+" アウト:"+out+
+" ヒット:"+hit
 
 }
 
