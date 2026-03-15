@@ -2,7 +2,7 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>⚾ 計算ピッチャーゲーム</title>
+<title>⚾ 九九ピッチャーゲーム</title>
 
 <style>
 
@@ -51,7 +51,7 @@ margin:10px;
 
 <body>
 
-<h1>⚾ 計算ピッチャーゲーム</h1>
+<h1>⚾ 九九ピッチャーゲーム</h1>
 
 計算
 <select id="operator">
@@ -111,12 +111,12 @@ nextPitch()
 function nextPitch(){
 
 if(out>=3){
-document.getElementById("question").innerText="🎉 クリア！"
+document.getElementById("question").innerText="🎉 ナイスピッチ！"
 return
 }
 
 if(hit>=4){
-document.getElementById("question").innerText="💀 ゲームオーバー"
+document.getElementById("question").innerText="ノックアウト💀"
 return
 }
 
