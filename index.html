@@ -593,17 +593,19 @@ function handleResult(type) {
     flash.style.color = '#06d6a0';
     balls++;
   } else if (type === '2basehit') {
-    soundHit.currentTime = 0;
-    soundHit.play();
-    flash.textContent = '2BASE HIT！💥';
-    flash.style.color = '#ff9f43';
-    hits += 2;
+  strikes = 0;
+  balls = 0;
+
+  flash.textContent = '2BASE HIT！💥';
+  flash.style.color = '#ff9f43';
+  hits += 2;
   } else {
-    soundHit.currentTime = 0;
-    soundHit.play();
-    flash.textContent = 'HIT！💣';
-    flash.style.color = '#ff6b6b';
-    hits++;
+  strikes = 0;
+  balls = 0;
+
+  flash.textContent = 'HIT！💣';
+  flash.style.color = '#ff6b6b';
+  hits++;
   }
 
   // アウト判定
