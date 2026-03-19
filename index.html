@@ -712,13 +712,17 @@ function endGame(type) {
   const msg = document.getElementById('overlay-msg');
   overlay.classList.add('show');
   if (type === 'nice') {
+    soundClear.currentTime = 0;
     soundClear.play();
-    title.textContent = '🏆NICE PITCH！';
+
+  title.textContent = '🏆NICE PITCH！';
     title.style.color = '#ffd60a';
     msg.textContent = `シャットアウト！良い投球だ！`;
   } else {
-    soundClear.play();
-    title.textContent = ' KNOCK OUT！💥';
+    soundOver.currentTime = 0;
+    soundOver.play();
+
+  title.textContent = ' KNOCK OUT！💥';
     title.style.color = '#ff6b6b';
     msg.textContent = `失点した😵降板だ…`;
   }
