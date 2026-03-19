@@ -65,6 +65,18 @@
   }
   h1 span { color: #ffd60a; }
 
+  /* 難易度選択 */
+  #difficulty {
+    font-family: 'Boogaloo', cursive;
+    font-size: 1.2rem;
+    padding: 6px 12px;
+    border-radius: 10px;
+    border: 3px solid #0a3d62;
+    background: var(--white);
+    color: #0a3d62;
+    cursor: pointer;
+  }
+
   /* 演算選択 */
   #op-select {
     display: flex;
@@ -330,14 +342,14 @@
 
 <div id="game-wrapper">
   <h1>⚾ <span>8Q</span> ⚾</h1>
-
+  <select id="difficulty">
+    <option value="3000">ソフト</option>
+    <option value="2000" selected>ノーマル</option>
+    <option value="1200">ハード</option>
+  </select>
+  
   <!-- 演算選択 -->
   <div id="op-select">
-    <select id="difficulty">
-      <option value="3000">ソフト（3秒）</option>
-      <option value="2000" selected>ノーマル（2秒）</option>
-      <option value="1200">ハード（1.2秒）</option>
-    </select>
     <button class="op-btn active" data-op="+">たし算 ＋</button>
     <button class="op-btn" data-op="-">ひき算 −</button>
     <button class="op-btn" data-op="*">かけ算 ×</button>
@@ -390,7 +402,7 @@
 
       <div class="divider"></div>
 
-      <div class="diamond-label">💗 HIT</div>
+      <div class="diamond-label">HIT</div>
       <div class="diamond-field">
         <div class="base second" id="base2"></div>
         <div class="base third"  id="base3"></div>
@@ -518,7 +530,7 @@ function nextQuestion() {
 
 // ===== タイマーバー =====
 function startTimerBar() {
-  const duration = 3000; // 3秒
+  const duration = parseInt(document.getElementById('difficulty').value);
   const bar = () => document.getElementById('timer-bar');
   let elapsed = 0;
   timerInterval = setInterval(() => {
