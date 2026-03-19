@@ -736,8 +736,8 @@ function restartGame() {
 
   // グリッドをクリア
   document.getElementById('grid').innerHTML = '';
-  document.getElementById('result-flash').innerHTML = '';
-  document.getElementById('q-count').textContent = 'retry';
+  document.getElementById('result-flash').innerHTML = 'retry';
+  document.getElementById('q-count').textContent = '';
 
   // 問題ボックスをプレイボール表示に戻す
   document.getElementById('question-box').innerHTML =
