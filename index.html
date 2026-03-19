@@ -127,7 +127,7 @@
   #timer-bar {
     height: 100%;
     width: 100%;
-    background: linear-gradient(90deg, #06d6a0, #ffd60a, #e85d04);
+    background: linear-gradient(90deg, #e85d04, #ffd60a, #06d6a0);
     border-radius: 4px;
     transition: width 0.05s linear;
   }
@@ -333,11 +333,16 @@
 
   <!-- 演算選択 -->
   <div id="op-select">
-    <button class="op-btn active" data-op="+">たし算 ＋</button>
-    <button class="op-btn" data-op="-">ひき算 −</button>
-    <button class="op-btn" data-op="*">かけ算 ×</button>
-    <button class="op-btn" data-op="/">わり算 ÷</button>
+    <option value="op-btn active" data-op="+">たし算 ＋</button>
+    <option value="op-btn" data-op="-">ひき算 −</button>
+    <option value="op-btn" data-op="*">かけ算 ×</button>
+    <option value="op-btn" data-op="/">わり算 ÷</button>
   </div>
+  <select id="difficulty">
+  <option value="3000">ソフト</option>
+  <option value="2000" selected>ノーマル</option>
+  <option value="1200">ハード</option>
+</select>
 
   <!-- メインエリア -->
   <div id="main-area">
@@ -405,6 +410,11 @@
   <button onclick="restartGame()">🔄 もう一度</button>
 </div>
 
+const soundStrike = new Audio("https://actions.google.com/sounds/v1/sports/baseball_hit.ogg");
+const soundHit = new Audio("https://actions.google.com/sounds/v1/impacts/wood_plank_flicks.ogg");
+const soundClear = new Audio("https://actions.google.com/sounds/v1/crowds/cheer.ogg");
+const soundOver = new Audio("https://actions.google.com/sounds/v1/crowds/boo.ogg");
+  
 <script>
 // ===== 状態 =====
 let op = '+';
@@ -513,7 +523,7 @@ function nextQuestion() {
 
 // ===== タイマーバー =====
 function startTimerBar() {
-  const duration = 2000; // 2秒
+  const duration = parseInt(document.getElementById('difficulty').value);
   const bar = () => document.getElementById('timer-bar');
   let elapsed = 0;
   timerInterval = setInterval(() => {
@@ -576,6 +586,8 @@ function handleResult(type) {
     flash.textContent = 'STRIKE！🔥';
     flash.style.color = '#ffd60a';
     strikes++;
+    soundStrike.currentTime = 0;
+    soundStrike.play();
   } else if (type === 'ball') {
     flash.textContent = 'BALL⚡️';
     flash.style.color = '#06d6a0';
@@ -584,10 +596,14 @@ function handleResult(type) {
     flash.textContent = '2BASE HIT！💥';
     flash.style.color = '#ff9f43';
     hits += 2;
+    soundHit.currentTime = 0;
+    soundHit.play();
   } else {
     flash.textContent = 'HIT！💣';
     flash.style.color = '#ff6b6b';
     hits++;
+    soundHit.currentTime = 0;
+    soundHit.play();
   }
 
   // アウト判定
@@ -699,10 +715,12 @@ function endGame(type) {
     title.textContent = '🏆NICE PITCH！';
     title.style.color = '#ffd60a';
     msg.textContent = `シャットアウト！良い投球だ！`;
+    soundClear.play();
   } else {
     title.textContent = ' KNOCK OUT！💥';
     title.style.color = '#ff6b6b';
     msg.textContent = `失点した😵降板だ…`;
+    soundClear.play();
   }
 }
 
