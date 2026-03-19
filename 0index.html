@@ -2,134 +2,224 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>計算タップゲーム</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>8Q⚾</title>
 
 <style>
+:root {
+  --sky:#1a6fa8;
+  --grass:#2d7d3a;
+  --white:#f5f0e8;
+}
 
 body{
-font-family:sans-serif;
-text-align:center;
+  font-family:sans-serif;
+  background:var(--sky);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  height:100vh;
 }
 
-#question{
-font-size:40px;
-margin:20px;
+h1{color:white;}
+
+#op-select{margin:10px;}
+
+#difficulty{
+  margin-bottom:10px;
+  font-size:1.2rem;
+  padding:5px;
 }
 
-.grid{
-display:grid;
-grid-template-columns:repeat(3,100px);
-grid-gap:10px;
-justify-content:center;
+#question-box{
+  background:white;
+  padding:15px;
+  font-size:2rem;
+  border-radius:10px;
+  cursor:pointer;
+  margin-bottom:10px;
+}
+
+#timer-bar-wrap{
+  width:100%;
+  height:8px;
+  background:#ccc;
+}
+
+#timer-bar{
+  height:100%;
+  width:100%;
+  background:linear-gradient(90deg,#e85d04,#ffd60a,#06d6a0);
+}
+
+#grid{
+  display:grid;
+  grid-template-columns:repeat(3,80px);
+  gap:5px;
 }
 
 .cell{
-width:100px;
-height:100px;
-font-size:35px;
-background:#f0f0f0;
-border-radius:10px;
-display:flex;
-align-items:center;
-justify-content:center;
-cursor:pointer;
+  background:#eee;
+  padding:20px;
+  text-align:center;
+  cursor:pointer;
 }
 
-.cell:hover{
-background:#ddd;
-}
-
+.correct{background:#06d6a0;}
+.wrong{background:#e63946;color:white;}
 </style>
 </head>
 
 <body>
 
-<div id="question">0 + 0</div>
+<h1>⚾8Q⚾</h1>
 
-<div class="grid" id="grid"></div>
+<div id="op-select">
+<button onclick="op='+'">＋</button>
+<button onclick="op='-'">−</button>
+<button onclick="op='*'">×</button>
+<button onclick="op='/'">÷</button>
+</div>
 
-<div id="result"></div>
+<!-- 難易度 -->
+<select id="difficulty">
+<option value="3000">ソフト（3秒）</option>
+<option value="2000" selected>ノーマル（2秒）</option>
+<option value="1200">ハード（1.2秒）</option>
+</select>
+
+<div id="question-box" onclick="startGame()">プレイボール！</div>
+
+<div id="timer-bar-wrap"><div id="timer-bar"></div></div>
+
+<div id="grid"></div>
 
 <script>
+// ===== 音 =====
+const soundStrike = new Audio("https://actions.google.com/sounds/v1/sports/baseball_hit.ogg");
+const soundHit = new Audio("https://actions.google.com/sounds/v1/impacts/wood_plank_flicks.ogg");
+const soundClear = new Audio("https://actions.google.com/sounds/v1/crowds/cheer.ogg");
+const soundOver = new Audio("https://actions.google.com/sounds/v1/crowds/boo.ogg");
 
-let correctAnswer
-let questionCount=0
-let mistake=false
-let maxQuestions=9
+// ===== 状態 =====
+let op = '+';
+let correctAnswer;
+let timer;
+let startTime;
+let hits = 0;
+let outs = 0;
 
-function createQuestion(){
-
-let a=Math.floor(Math.random()*10)
-let b=Math.floor(Math.random()*10)
-
-correctAnswer=a+b
-
-document.getElementById("question").innerText=a+" + "+b
-
-createGrid()
-
+// ===== ゲーム開始 =====
+function startGame(){
+  hits=0; outs=0;
+  nextQuestion();
 }
 
-function createGrid(){
-
-let grid=document.getElementById("grid")
-grid.innerHTML=""
-
-let numbers=[]
-
-while(numbers.length<8){
-
-let n=Math.floor(Math.random()*19)
-
-if(n!=correctAnswer && !numbers.includes(n)){
-numbers.push(n)
+// ===== 問題生成 =====
+function genQuestion(){
+  let a,b,ans;
+  if(op==='+'){a=rand(1,50);b=rand(1,50);ans=a+b;}
+  if(op==='-'){a=rand(1,50);b=rand(1,a);ans=a-b;}
+  if(op==='*'){a=rand(1,9);b=rand(1,9);ans=a*b;}
+  if(op==='/'){b=rand(1,9);ans=rand(1,9);a=b*ans;}
+  return {a,b,ans};
 }
 
+function rand(min,max){
+  return Math.floor(Math.random()*(max-min+1))+min;
 }
 
-numbers.push(correctAnswer)
+// ===== 問題表示 =====
+function nextQuestion(){
+  const {a,b,ans}=genQuestion();
+  correctAnswer=ans;
 
-numbers.sort(()=>Math.random()-0.5)
+  document.getElementById('question-box').textContent=`${a} ${op} ${b}`;
 
-numbers.forEach(num=>{
+  const choices=[ans];
+  while(choices.length<9){
+    let n=ans+rand(-10,10);
+    if(!choices.includes(n) && n>=0) choices.push(n);
+  }
 
-let div=document.createElement("div")
-div.className="cell"
-div.innerText=num
+  choices.sort(()=>Math.random()-0.5);
 
-div.onclick=()=>checkAnswer(num)
+  const grid=document.getElementById('grid');
+  grid.innerHTML='';
 
-grid.appendChild(div)
+  choices.forEach(c=>{
+    const div=document.createElement('div');
+    div.className='cell';
+    div.textContent=c;
+    div.onclick=()=>answer(c,div);
+    grid.appendChild(div);
+  });
 
-})
-
+  startTimer();
 }
 
-function checkAnswer(num){
+// ===== タイマー =====
+function startTimer(){
+  clearInterval(timer);
+  const duration=parseInt(document.getElementById('difficulty').value);
+  const bar=document.getElementById('timer-bar');
 
-questionCount++
+  startTime=Date.now();
 
-if(num!=correctAnswer){
+  timer=setInterval(()=>{
+    const elapsed=Date.now()-startTime;
+    const pct=100-(elapsed/duration*100);
+    bar.style.width=pct+'%';
 
-mistake=true
-maxQuestions=16
-
+    if(elapsed>=duration){
+      clearInterval(timer);
+      hit();
+    }
+  },50);
 }
 
-if(questionCount>=maxQuestions){
+// ===== 回答 =====
+function answer(val,cell){
+  clearInterval(timer);
 
-document.getElementById("result").innerText="終了！問題数："+questionCount
-document.getElementById("grid").innerHTML=""
-return
-
+  if(val===correctAnswer){
+    cell.classList.add('correct');
+    strike();
+  }else{
+    cell.classList.add('wrong');
+    hit();
+  }
 }
 
-createQuestion()
-
+// ===== 結果 =====
+function strike(){
+  soundStrike.currentTime=0;
+  soundStrike.play();
+  nextQuestion();
 }
 
-createQuestion()
+function hit(){
+  soundHit.currentTime=0;
+  soundHit.play();
+  hits++;
 
+  if(hits>=4){
+    gameOver();
+  }else{
+    nextQuestion();
+  }
+}
+
+function gameClear(){
+  soundClear.play();
+  alert("クリア！");
+}
+
+function gameOver(){
+  soundOver.play();
+  alert("ゲームオーバー！");
+}
 </script>
 
 </body>
