@@ -2,14 +2,79 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>8Q⚾</title>
+
 <style>
-body{font-family:sans-serif;text-align:center;background:#1a6fa8;color:white;}
-#grid{display:grid;grid-template-columns:repeat(3,80px);gap:5px;justify-content:center;}
-.cell{background:#eee;color:black;padding:20px;cursor:pointer;}
-.correct{background:#06d6a0;}
-.wrong{background:#e63946;color:white;}
-#timer-bar{height:10px;background:linear-gradient(90deg,#e85d04,#ffd60a,#06d6a0);}
+body {
+  font-family: sans-serif;
+  text-align: center;
+  background: #1a6fa8;
+  color: white;
+}
+
+/* 演算ボタン */
+#op-select {
+  margin: 10px;
+}
+.op-btn {
+  margin: 5px;
+  padding: 10px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.op-btn.active {
+  background: yellow;
+}
+
+/* 難易度 */
+#difficulty {
+  margin: 10px;
+  font-size: 16px;
+}
+
+/* 問題 */
+#question-box {
+  font-size: 24px;
+  margin: 20px;
+  cursor: pointer;
+}
+
+/* タイマー */
+#timer-bar-wrap {
+  width: 200px;
+  height: 10px;
+  background: #ccc;
+  margin: 10px auto;
+}
+#timer-bar {
+  height: 100%;
+  width: 100%;
+  background: linear-gradient(90deg, #e63946, #ffd60a, #06d6a0);
+}
+
+/* グリッド */
+#grid {
+  display: grid;
+  grid-template-columns: repeat(3, 80px);
+  gap: 10px;
+  justify-content: center;
+}
+.cell {
+  background: #eee;
+  color: black;
+  padding: 20px;
+  cursor: pointer;
+  font-weight: bold;
+}
+.correct { background: #06d6a0; }
+.wrong { background: #e63946; color: white; }
+
+/* 結果 */
+#result-flash {
+  font-size: 20px;
+  margin: 10px;
+}
 </style>
 </head>
 
@@ -18,56 +83,81 @@ body{font-family:sans-serif;text-align:center;background:#1a6fa8;color:white;}
 <h1>⚾8Q⚾</h1>
 
 <div id="op-select">
-<button class="op-btn" data-op="+">＋</button>
-<button class="op-btn" data-op="-">−</button>
-<button class="op-btn" data-op="*">×</button>
-<button class="op-btn" data-op="/">÷</button>
+  <button class="op-btn active" data-op="+">＋</button>
+  <button class="op-btn" data-op="-">−</button>
+  <button class="op-btn" data-op="*">×</button>
+  <button class="op-btn" data-op="/">÷</button>
 </div>
 
 <select id="difficulty">
-<option value="3000">ソフト</option>
-<option value="2000" selected>ノーマル</option>
-<option value="1200">ハード</option>
+  <option value="3000">ソフト</option>
+  <option value="2000" selected>ノーマル</option>
+  <option value="1200">ハード</option>
 </select>
 
-<div id="question-box" onclick="startGame()">プレイボール！</div>
-<div id="timer-bar"></div>
+<div id="question-box">⚾クリックでスタート！</div>
+
+<div id="timer-bar-wrap">
+  <div id="timer-bar"></div>
+</div>
+
+<div id="result-flash"></div>
 <div id="grid"></div>
-<div id="result"></div>
 
 <script>
 
-// ===== 音（必須）=====
+// ===== 音 =====
 const soundStrike = new Audio("https://actions.google.com/sounds/v1/sports/baseball_hit.ogg");
 const soundHit = new Audio("https://actions.google.com/sounds/v1/impacts/wood_plank_flicks.ogg");
-const soundClear = new Audio("https://actions.google.com/sounds/v1/crowds/cheer.ogg");
+const soundClear = new Audio("https://actions.google.com/sounds/v1/crowds/large_crowd_cheer.ogg");
 const soundOver = new Audio("https://actions.google.com/sounds/v1/crowds/boo.ogg");
 
 // ===== 状態 =====
 let op = '+';
-let correctAnswer;
-let timer;
-let startTime;
+let correctAnswer = 0;
+let timerInterval = null;
+let startTime = 0;
+let gameActive = false;
 let hits = 0;
+let strikes = 0;
+let balls = 0;
 
 // ===== 演算選択 =====
-document.querySelectorAll('.op-btn').forEach(btn=>{
-  btn.onclick=()=>op=btn.dataset.op;
+document.querySelectorAll('.op-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.op-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    op = btn.dataset.op;
+  });
 });
 
-// ===== 開始 =====
-function startGame(){
-  hits=0;
+// ===== スタート =====
+document.getElementById("question-box").onclick = () => {
+  if (!gameActive) startGame();
+};
+
+function startGame() {
+  hits = 0;
+  strikes = 0;
+  balls = 0;
+  gameActive = true;
   nextQuestion();
 }
 
-// ===== 問題 =====
-function genQuestion(){
-  let a,b,ans;
-  if(op==='+'){a=rand(1,50);b=rand(1,50);ans=a+b;}
-  if(op==='-'){a=rand(1,50);b=rand(1,a);ans=a-b;}
-  if(op==='*'){a=rand(1,9);b=rand(1,9);ans=a*b;}
-  if(op==='/'){b=rand(1,9);ans=rand(1,9);a=b*ans;}
+// ===== 問題生成 =====
+function genQuestion() {
+  let a, b, ans;
+
+  if (op === '+') {
+    a = rand(1,50); b = rand(1,50); ans = a + b;
+  } else if (op === '-') {
+    a = rand(5,50); b = rand(1,a); ans = a - b;
+  } else if (op === '*') {
+    a = rand(1,9); b = rand(1,9); ans = a * b;
+  } else {
+    b = rand(1,9); ans = rand(1,9); a = b * ans;
+  }
+
   return {a,b,ans};
 }
 
@@ -76,86 +166,125 @@ function rand(min,max){
 }
 
 // ===== 出題 =====
-function nextQuestion(){
-  const {a,b,ans}=genQuestion();
-  correctAnswer=ans;
+function nextQuestion() {
+  const {a,b,ans} = genQuestion();
+  correctAnswer = ans;
 
-  document.getElementById("question-box").textContent=`${a} ${op} ${b}`;
+  document.getElementById("question-box").textContent = `${a} ${op} ${b}`;
+  document.getElementById("result-flash").textContent = "";
 
-  const choices=[ans];
-  while(choices.length<9){
-    let n=ans+rand(-10,10);
-    if(!choices.includes(n)&&n>=0)choices.push(n);
+  const choices = new Set([ans]);
+  while (choices.size < 9) {
+    let c = ans + rand(-10,10);
+    if (c >= 0) choices.add(c);
   }
 
-  const grid=document.getElementById("grid");
-  grid.innerHTML="";
-  choices.sort(()=>Math.random()-0.5);
+  const grid = document.getElementById("grid");
+  grid.innerHTML = "";
 
-  choices.forEach(c=>{
-    const div=document.createElement("div");
-    div.className="cell";
-    div.textContent=c;
-    div.onclick=()=>answer(c,div);
-    grid.appendChild(div);
+  [...choices].sort(()=>Math.random()-0.5).forEach(c=>{
+    const cell = document.createElement("div");
+    cell.className = "cell";
+    cell.textContent = c;
+    cell.onclick = () => answer(c, cell);
+    grid.appendChild(cell);
   });
 
   startTimer();
 }
 
 // ===== タイマー =====
-function startTimer(){
-  clearInterval(timer);
-  const duration=parseInt(document.getElementById("difficulty").value);
-  const bar=document.getElementById("timer-bar");
+function startTimer() {
+  clearInterval(timerInterval);
 
-  startTime=Date.now();
+  const duration = parseInt(document.getElementById("difficulty").value);
+  const bar = document.getElementById("timer-bar");
 
-  timer=setInterval(()=>{
-    let t=Date.now()-startTime;
-    bar.style.width=(100-t/duration*100)+"%";
-    if(t>=duration){
-      clearInterval(timer);
+  startTime = Date.now();
+
+  timerInterval = setInterval(()=>{
+    const elapsed = Date.now() - startTime;
+    const pct = 100 - (elapsed / duration * 100);
+    bar.style.width = pct + "%";
+
+    if (elapsed >= duration) {
+      clearInterval(timerInterval);
       hit();
     }
   },50);
 }
 
 // ===== 回答 =====
-function answer(val,cell){
-  clearInterval(timer);
+function answer(value, cell) {
+  clearInterval(timerInterval);
 
-  if(val===correctAnswer){
+  const elapsed = Date.now() - startTime;
+  const limit = parseInt(document.getElementById("difficulty").value);
+
+  if (value === correctAnswer) {
     cell.classList.add("correct");
-    strike();
-  }else{
+
+    if (elapsed <= limit) {
+      strike();
+    } else {
+      ball();
+    }
+
+  } else {
     cell.classList.add("wrong");
     hit();
   }
 }
 
 // ===== 結果 =====
-function strike(){
-  soundStrike.currentTime=0;
+function strike() {
+  soundStrike.currentTime = 0;
   soundStrike.play().catch(()=>{});
+  strikes++;
+  document.getElementById("result-flash").textContent = "STRIKE！";
+
+  if (strikes >= 3) {
+    strikes = 0;
+    balls = 0;
+  }
+
   nextQuestion();
 }
 
-function hit(){
-  soundHit.currentTime=0;
-  soundHit.play().catch(()=>{});
-  hits++;
+function ball() {
+  balls++;
+  document.getElementById("result-flash").textContent = "BALL";
 
-  if(hits>=4){
-    gameOver();
-  }else{
+  if (balls >= 4) {
+    balls = 0;
+    strikes = 0;
+    hit();
+  } else {
     nextQuestion();
   }
 }
 
-function gameOver(){
+function hit() {
+  soundHit.currentTime = 0;
+  soundHit.play().catch(()=>{});
+
+  strikes = 0;
+  balls = 0;
+  hits++;
+
+  document.getElementById("result-flash").textContent = "HIT！";
+
+  if (hits >= 4) {
+    gameOver();
+  } else {
+    nextQuestion();
+  }
+}
+
+function gameOver() {
+  gameActive = false;
   soundOver.play().catch(()=>{});
-  alert("ゲームオーバー");
+  alert("ゲームオーバー！");
 }
 
 </script>
