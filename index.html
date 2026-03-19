@@ -184,7 +184,7 @@
 
   /* スコアボード（右側） */
   #scoreboard {
-    background: rgba(10,61,98,0.85);
+    background: linear-gradient(to bottom, #0b6623, #064d1a);
     border: 3px solid var(--white);
     border-radius: 18px;
     padding: 14px 16px;
@@ -593,18 +593,21 @@ function handleResult(type) {
     flash.style.color = '#06d6a0';
     balls++;
   } else if (type === '2basehit') {
-  strikes = 0;
-  balls = 0;
-
-  flash.textContent = '2BASE HIT！💥';
-  flash.style.color = '#ff9f43';
-  hits += 2;
+    strikes = 0;
+    balls = 0;
+    questionCount = 0;
+    flash.innerHTML = '2BASE HIT！💥<br><span style="font-size:1.2rem;">⚾ BATTER CHANGE</span>';
+    flash.style.color = '#ff9f43';
+    hits += 2;
+  }
   } else {
   strikes = 0;
   balls = 0;
+  questionCount = 0;
 
-  flash.textContent = 'HIT！💣';
+  flash.innerHTML = 'HIT！💣<br><span style="font-size:1.2rem;">⚾ BATTER CHANGE</span>';
   flash.style.color = '#ff6b6b';
+
   hits++;
   }
 
