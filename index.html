@@ -3,13 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <title>8Q⚾</title>
+
 <style>
-/* 変更なし（そのまま） */
+/* 既存はそのまま */
 #timer-bar{
   background: linear-gradient(90deg, red, orange, green);
 }
 </style>
 </head>
+
 <body>
 
 <!-- 効果音 -->
@@ -18,14 +20,21 @@
 <audio id="soundClear" src="https://assets.mixkit.co/sfx/preview/mixkit-crowd-cheer-2017.mp3"></audio>
 <audio id="soundOver" src="https://assets.mixkit.co/sfx/preview/mixkit-crowd-boo-2016.mp3"></audio>
 
-<div id="question-box" onclick="startGame()">プレイボール！</div>
-<div id="grid"></div>
+<div id="op-select">
+  <button class="op-btn active" data-op="+">＋</button>
+  <button class="op-btn" data-op="-">−</button>
+  <button class="op-btn" data-op="*">×</button>
+  <button class="op-btn" data-op="/">÷</button>
+</div>
 
 <select id="difficulty">
   <option value="3000">ソフト</option>
   <option value="2000" selected>ノーマル</option>
   <option value="1200">ハード</option>
 </select>
+
+<div id="question-box" onclick="startGame()">⚾ プレイボール！</div>
+<div id="grid"></div>
 
 <script>
 // ===== 音 =====
@@ -35,64 +44,130 @@ const soundClear = document.getElementById("soundClear");
 const soundOver = document.getElementById("soundOver");
 
 // ===== 状態 =====
+let op = '+';
+let strikes = 0;
+let balls = 0;
+let hits = 0;
+let outs = 0;
 let correctAnswer = 0;
 let startTime = 0;
-let timer;
+
+// ===== 演算選択 =====
+document.querySelectorAll('.op-btn').forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll('.op-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    op = btn.dataset.op;
+  }
+});
 
 // ===== 開始 =====
 function startGame(){
+  strikes = 0;
+  balls = 0;
+  hits = 0;
+  outs = 0;
   nextQuestion();
 }
 
 // ===== 問題生成 =====
 function nextQuestion(){
-  const a = Math.floor(Math.random()*9)+1;
-  const b = Math.floor(Math.random()*9)+1;
-  correctAnswer = a*b;
+  let a,b;
+
+  if(op==='+'){
+    a=rand(1,50); b=rand(1,50);
+    correctAnswer = a+b;
+  }else if(op==='-'){
+    a=rand(10,50); b=rand(1,a);
+    correctAnswer = a-b;
+  }else if(op==='*'){
+    a=rand(1,9); b=rand(1,9);
+    correctAnswer = a*b;
+  }else{
+    b=rand(1,9);
+    correctAnswer=rand(1,9);
+    a=b*correctAnswer;
+  }
 
   document.getElementById("question-box").innerHTML =
-    `${a} × ${b}`;
+    `${a} ${op} ${b}`;
 
   const grid = document.getElementById("grid");
-  grid.innerHTML = "";
+  grid.innerHTML="";
 
-  let choices = [correctAnswer];
+  let choices=[correctAnswer];
   while(choices.length<9){
-    let n = Math.floor(Math.random()*81);
-    if(!choices.includes(n)) choices.push(n);
+    let n=correctAnswer+rand(-10,10);
+    if(n>=0 && !choices.includes(n)) choices.push(n);
   }
 
   choices.sort(()=>Math.random()-0.5);
 
   choices.forEach(c=>{
-    const div = document.createElement("div");
-    div.textContent = c;
-    div.onclick = ()=>check(c);
+    const div=document.createElement("div");
+    div.textContent=c;
+    div.onclick=()=>answer(c);
     grid.appendChild(div);
   });
 
   startTime = Date.now();
 }
 
-// ===== 判定 =====
-function check(val){
+// ===== 回答 =====
+function answer(val){
   const elapsed = Date.now() - startTime;
   const limit = parseInt(document.getElementById("difficulty").value);
 
   if(val === correctAnswer){
+
     if(elapsed <= limit){
+      soundStrike.currentTime=0;
       soundStrike.play();
-      alert("ストライク！");
+      strikes++;
     }else{
-      alert("ボール！");
+      balls++;
     }
+
   }else{
+    // ヒット時リセット
+    strikes = 0;
+    balls = 0;
+
+    soundHit.currentTime=0;
     soundHit.play();
-    alert("ヒット！");
+
+    hits++;
+  }
+
+  // アウト
+  if(strikes>=3){
+    strikes=0;
+    balls=0;
+    outs++;
+  }
+
+  // クリア
+  if(outs>=3){
+    soundClear.play();
+    alert("クリア！");
+    return;
+  }
+
+  // ゲームオーバー
+  if(hits>=4){
+    soundOver.play();
+    alert("ゲームオーバー");
+    return;
   }
 
   nextQuestion();
 }
+
+// ===== util =====
+function rand(min,max){
+  return Math.floor(Math.random()*(max-min+1))+min;
+}
 </script>
+
 </body>
 </html>
