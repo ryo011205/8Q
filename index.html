@@ -411,10 +411,10 @@
 </div>
 
 <script>
-const soundStrike = new Audio("https://actions.google.com/sounds/v1/sports/baseball_hit.ogg");
-const soundHit = new Audio("https://actions.google.com/sounds/v1/impacts/wood_plank_flicks.ogg");
-const soundClear = new Audio("https://actions.google.com/sounds/v1/crowds/cheer.ogg");
-const soundOver = new Audio("https://actions.google.com/sounds/v1/crowds/boo.ogg");
+soundStrike.play().catch(()=>{});
+soundHit.play().catch(()=>{});
+soundClear.play().catch(()=>{});
+soundOver.play().catch(()=>{});
   
 // ===== 状態 =====
 let op = '+';
