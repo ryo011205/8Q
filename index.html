@@ -589,19 +589,19 @@ function onAnswer(value, cell) {
 function handleResult(type) {
   const flash = document.getElementById('result-flash');
   if (type === 'strike') {
-    flash.textContent = '⚡ STRIKE！';
+    flash.textContent = 'STRIKE🔥';
     flash.style.color = '#ffd60a';
     strikes++;
   } else if (type === 'ball') {
-    flash.textContent = '🟢 BALL';
+    flash.textContent = 'BALL😞';
     flash.style.color = '#06d6a0';
     balls++;
   } else if (type === '2basehit') {
-    flash.textContent = '💥 2BASE HIT！';
+    flash.textContent = '2BASE HIT！💥 ';
     flash.style.color = '#ff9f43';
     hits += 2;
   } else {
-    flash.textContent = '💢 HIT！';
+    flash.textContent = 'HIT！💣';
     flash.style.color = '#ff6b6b';
     hits++;
   }
@@ -623,7 +623,7 @@ function handleResult(type) {
 
     // ストラックアウト！表示してからネクストバッターへ
     const flash = document.getElementById('result-flash');
-    flash.innerHTML = '🔴 STRIKE OUT！<br><span style="font-size:1.4rem;color:#fff;">⚾ NEXT BATTER</span>';
+    flash.innerHTML = 'STRIKE OUT👍<br><span style="font-size:1.4rem;color:#fff;">NEXT BATTER⚾</span>';
     flash.style.color = '#e63946';
     setTimeout(nextQuestion, 1800);
     return;
@@ -712,13 +712,13 @@ function endGame(type) {
   const msg = document.getElementById('overlay-msg');
   overlay.classList.add('show');
   if (type === 'nice') {
-    title.textContent = '🏆 ナイスピッチ！';
+    title.textContent = 'NICE PITCH!!🏆';
     title.style.color = '#ffd60a';
-    msg.textContent = `ストラックアウト3つ！完璧な投球だ！`;
+    msg.textContent = `シャットアウトした！`;
   } else {
-    title.textContent = '💥 KNOCK OUT！';
+    title.textContent = 'KNOCK OUT💥 ';
     title.style.color = '#ff6b6b';
-    msg.textContent = `ヒット4本打たれた…`;
+    msg.textContent = `失点した😵降板…`;
   }
 }
 
