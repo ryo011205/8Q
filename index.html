@@ -411,7 +411,6 @@
 </div>
 
 <script>
-
 const soundStrike = new Audio("https://actions.google.com/sounds/v1/sports/baseball_hit.ogg");
 const soundHit = new Audio("https://actions.google.com/sounds/v1/impacts/wood_plank_flicks.ogg");
 const soundClear = new Audio("https://actions.google.com/sounds/v1/crowds/cheer.ogg");
@@ -584,27 +583,27 @@ function onAnswer(value, cell) {
 function handleResult(type) {
   const flash = document.getElementById('result-flash');
   if (type === 'strike') {
+    soundStrike.currentTime = 0;
+    soundStrike.play();
     flash.textContent = 'STRIKE！🔥';
     flash.style.color = '#ffd60a';
     strikes++;
-    soundStrike.currentTime = 0;
-    soundStrike.play();
   } else if (type === 'ball') {
     flash.textContent = 'BALL⚡️';
     flash.style.color = '#06d6a0';
     balls++;
   } else if (type === '2basehit') {
+    soundHit.currentTime = 0;
+    soundHit.play();
     flash.textContent = '2BASE HIT！💥';
     flash.style.color = '#ff9f43';
     hits += 2;
+  } else {
     soundHit.currentTime = 0;
     soundHit.play();
-  } else {
     flash.textContent = 'HIT！💣';
     flash.style.color = '#ff6b6b';
     hits++;
-    soundHit.currentTime = 0;
-    soundHit.play();
   }
 
   // アウト判定
@@ -713,15 +712,15 @@ function endGame(type) {
   const msg = document.getElementById('overlay-msg');
   overlay.classList.add('show');
   if (type === 'nice') {
+    soundClear.play();
     title.textContent = '🏆NICE PITCH！';
     title.style.color = '#ffd60a';
     msg.textContent = `シャットアウト！良い投球だ！`;
-    soundClear.play();
   } else {
+    soundClear.play();
     title.textContent = ' KNOCK OUT！💥';
     title.style.color = '#ff6b6b';
     msg.textContent = `失点した😵降板だ…`;
-    soundClear.play();
   }
 }
 
