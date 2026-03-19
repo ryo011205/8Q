@@ -513,7 +513,7 @@ function nextQuestion() {
 
 // ===== タイマーバー =====
 function startTimerBar() {
-  const duration = 3000; // 2秒
+  const duration = 2000; // 2秒
   const bar = () => document.getElementById('timer-bar');
   let elapsed = 0;
   timerInterval = setInterval(() => {
@@ -522,6 +522,7 @@ function startTimerBar() {
     if (bar()) bar().style.width = pct + '%';
     if (elapsed >= duration) {
       clearTimer();
+   
       // 時間切れ → 無回答ヒット
       if (!cellsDisabled) {
         cellsDisabled = true;
@@ -695,7 +696,7 @@ function endGame(type) {
   const msg = document.getElementById('overlay-msg');
   overlay.classList.add('show');
   if (type === 'nice') {
-    title.textContent = '🏆 ナイスピッチ！';
+    title.textContent = '🏆NICE PITCH！';
     title.style.color = '#ffd60a';
     msg.textContent = `シャットアウト！良い投球だ！`;
   } else {
