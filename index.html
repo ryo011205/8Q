@@ -513,7 +513,7 @@ function nextQuestion() {
 
 // ===== タイマーバー =====
 function startTimerBar() {
-  const duration = 3000; // 3秒
+  const duration = 3000; // 2秒
   const bar = () => document.getElementById('timer-bar');
   let elapsed = 0;
   timerInterval = setInterval(() => {
@@ -572,19 +572,19 @@ function onAnswer(value, cell) {
 function handleResult(type) {
   const flash = document.getElementById('result-flash');
   if (type === 'strike') {
-    flash.textContent = '⚡ STRIKE！';
+    flash.textContent = 'STRIKE！🔥';
     flash.style.color = '#ffd60a';
     strikes++;
   } else if (type === 'ball') {
-    flash.textContent = '🟢 BALL';
+    flash.textContent = 'BALL⚡️';
     flash.style.color = '#06d6a0';
     balls++;
   } else if (type === '2basehit') {
-    flash.textContent = '💥 2BASE HIT！';
+    flash.textContent = '2BASE HIT！💥';
     flash.style.color = '#ff9f43';
     hits += 2;
   } else {
-    flash.textContent = '💢 HIT！';
+    flash.textContent = 'HIT！💣';
     flash.style.color = '#ff6b6b';
     hits++;
   }
@@ -697,11 +697,11 @@ function endGame(type) {
   if (type === 'nice') {
     title.textContent = '🏆 ナイスピッチ！';
     title.style.color = '#ffd60a';
-    msg.textContent = `ストラックアウト3つ！完璧な投球だ！`;
+    msg.textContent = `シャットアウト！良い投球だ！`;
   } else {
-    title.textContent = '💥 KNOCK OUT！';
+    title.textContent = ' KNOCK OUT！💥';
     title.style.color = '#ff6b6b';
-    msg.textContent = `ヒット4本打たれた…`;
+    msg.textContent = `失点した…`;
   }
 }
 
