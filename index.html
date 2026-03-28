@@ -344,7 +344,7 @@
     <div id="left-area">
       <!-- 問題 -->
       <div id="question-box" id="question-box" onclick="handleQBoxClick()">
-        ⚾ プレイボール！
+        ⚾ プレイボール 🫵
         <div id="timer-bar-wrap"><div id="timer-bar"></div></div>
       </div>
       <div id="result-flash">&nbsp;</div>
@@ -385,7 +385,7 @@
 
       <div class="divider"></div>
 
-      <div class="diamond-label">💗 HIT</div>
+      <div class="diamond-label">HIT💣</div>
       <div class="diamond-field">
         <div class="base second" id="base2"></div>
         <div class="base third"  id="base3"></div>
@@ -400,9 +400,9 @@
 
 <!-- ゲームオーバー / クリアオーバーレイ -->
 <div id="overlay">
-  <h2 id="overlay-title">ナイスピッチ！</h2>
+  <h2 id="overlay-title">NICE Pitch 🎊</h2>
   <p id="overlay-msg">素晴らしい！</p>
-  <button onclick="restartGame()">🔄 もう一度</button>
+  <button onclick="restartGame()">🔄 NEXT Batter </button>
 </div>
 
 <script>
@@ -607,7 +607,7 @@ function handleResult(type) {
     strikes = 0; balls = 0;
     hits++;
     questionCount = 0;
-    setTimeout(() => showMini('四球ヒット！', '#f72585'), 100);
+    setTimeout(() => showMini('フォアボール 😵', '#f72585'), 100);
   }
 
   updateScoreboard();
@@ -711,7 +711,7 @@ function restartGame() {
 
   // 問題ボックスをプレイボール表示に戻す
   document.getElementById('question-box').innerHTML =
-    `⚾ プレイボール！<div id="timer-bar-wrap"><div id="timer-bar" style="width:100%"></div></div>`;
+    `⚾ プレイボール 🫵<div id="timer-bar-wrap"><div id="timer-bar" style="width:100%"></div></div>`;
   document.getElementById('question-box').classList.add('waiting');
 
   // オーバーレイを閉じる
