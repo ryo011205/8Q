@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>算数ベースボール⚾</title>
+<title>8Q⚾</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Boogaloo&family=M+PLUS+Rounded+1c:wght@400;700;900&display=swap');
 
@@ -564,15 +564,15 @@ function onAnswer(value, cell) {
 function handleResult(type) {
   const flash = document.getElementById('result-flash');
   if (type === 'strike') {
-    flash.textContent = '⚡ STRIKE！';
+    flash.textContent = 'STRIKE！👍';
     flash.style.color = '#ffd60a';
     strikes++;
   } else if (type === 'ball') {
-    flash.textContent = '🟢 BALL';
+    flash.textContent = 'BALL✋';
     flash.style.color = '#06d6a0';
     balls++;
   } else {
-    flash.textContent = '💢 HIT！';
+    flash.textContent = 'HIT💣';
     flash.style.color = '#ff6b6b';
     hits++;
     strikes = 0; balls = 0;
@@ -596,7 +596,7 @@ function handleResult(type) {
 
     // ストラックアウト！表示してからネクストバッターへ
     const flash = document.getElementById('result-flash');
-    flash.innerHTML = '🔴 STRIKE OUT！<br><span style="font-size:1.4rem;color:#fff;">⚾ NEXT BATTER</span>';
+    flash.innerHTML = 'STRIKE OUT🔥<br><span style="font-size:1.4rem;color:#fff;">⚾ NEXT BATTER</span>';
     flash.style.color = '#e63946';
     setTimeout(nextQuestion, 1800);
     return;
@@ -687,11 +687,11 @@ function endGame(type) {
   if (type === 'nice') {
     title.textContent = '🏆 ナイスピッチ！';
     title.style.color = '#ffd60a';
-    msg.textContent = `ストラックアウト3つ！完璧な投球だ！`;
+    msg.textContent = `シャットアウト！`;
   } else {
     title.textContent = '💥 KNOCK OUT！';
     title.style.color = '#ff6b6b';
-    msg.textContent = `ヒット4本打たれた…`;
+    msg.textContent = `ノックアウト...降板です`;
   }
 }
 
