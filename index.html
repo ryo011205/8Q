@@ -65,18 +65,6 @@
   }
   h1 span { color: #ffd60a; }
 
-  /* 難易度選択 */
-  #difficulty {
-    font-family: 'Boogaloo', cursive;
-    font-size: 1.2rem;
-    padding: 6px 12px;
-    border-radius: 10px;
-    border: 3px solid #0a3d62;
-    background: var(--white);
-    color: #0a3d62;
-    cursor: pointer;
-  }
-
   /* 演算選択 */
   #op-select {
     display: flex;
@@ -139,7 +127,7 @@
   #timer-bar {
     height: 100%;
     width: 100%;
-    background: linear-gradient(90deg, #e85d04, #ffd60a, #06d6a0);
+    background: linear-gradient(90deg, #06d6a0, #ffd60a, #e85d04);
     border-radius: 4px;
     transition: width 0.05s linear;
   }
@@ -196,7 +184,7 @@
 
   /* スコアボード（右側） */
   #scoreboard {
-    background: rgba(10,61,98,0.85);
+    background: rgba(10, 61, 20, 0.92);
     border: 3px solid var(--white);
     border-radius: 18px;
     padding: 14px 16px;
@@ -342,12 +330,7 @@
 
 <div id="game-wrapper">
   <h1>⚾ <span>8Q</span> ⚾</h1>
-  <select id="difficulty">
-    <option value="3000">ソフト</option>
-    <option value="2000" selected>ノーマル</option>
-    <option value="1200">ハード</option>
-  </select>
-  
+
   <!-- 演算選択 -->
   <div id="op-select">
     <button class="op-btn active" data-op="+">たし算 ＋</button>
@@ -402,7 +385,7 @@
 
       <div class="divider"></div>
 
-      <div class="diamond-label">HIT</div>
+      <div class="diamond-label">💗 HIT</div>
       <div class="diamond-field">
         <div class="base second" id="base2"></div>
         <div class="base third"  id="base3"></div>
@@ -530,7 +513,7 @@ function nextQuestion() {
 
 // ===== タイマーバー =====
 function startTimerBar() {
-  const duration = parseInt(document.getElementById('difficulty').value);
+  const duration = 3000; // 3秒
   const bar = () => document.getElementById('timer-bar');
   let elapsed = 0;
   timerInterval = setInterval(() => {
@@ -539,14 +522,14 @@ function startTimerBar() {
     if (bar()) bar().style.width = pct + '%';
     if (elapsed >= duration) {
       clearTimer();
-      // 時間切れ → 無回答ヒット
+      // 時間切れ → ボール
       if (!cellsDisabled) {
         cellsDisabled = true;
         document.querySelectorAll('.cell').forEach(c => {
           c.classList.add('disabled');
           if (parseInt(c.textContent) === correctAnswer) c.classList.add('correct');
         });
-        handleResult('hit');
+        handleResult('ball');
       }
     }
   }, 50);
@@ -566,22 +549,14 @@ function onAnswer(value, cell) {
   const elapsed = Date.now() - startTime;
   if (value === correctAnswer) {
     cell.classList.add('correct');
-    if (elapsed <= 3000) {
-      handleResult('strike');
-    } else {
-      handleResult('ball');
-    }
+    handleResult('strike');
   } else {
     cell.classList.add('wrong');
     // 正解セルも光らせる
     document.querySelectorAll('.cell').forEach(c => {
       if (parseInt(c.textContent) === correctAnswer) c.classList.add('correct');
     });
-    if (elapsed > 3000) {
-      handleResult('2basehit');
-    } else {
-      handleResult('hit');
-    }
+    handleResult('hit');
   }
 }
 
@@ -589,21 +564,19 @@ function onAnswer(value, cell) {
 function handleResult(type) {
   const flash = document.getElementById('result-flash');
   if (type === 'strike') {
-    flash.textContent = 'STRIKE🔥';
+    flash.textContent = 'STRIKE！👍';
     flash.style.color = '#ffd60a';
     strikes++;
   } else if (type === 'ball') {
-    flash.textContent = 'BALL😞';
+    flash.textContent = 'BALL✋';
     flash.style.color = '#06d6a0';
     balls++;
-  } else if (type === '2basehit') {
-    flash.textContent = '2BASE HIT！💥 ';
-    flash.style.color = '#ff9f43';
-    hits += 2;
   } else {
-    flash.textContent = 'HIT！💣';
+    flash.textContent = 'HIT💣';
     flash.style.color = '#ff6b6b';
     hits++;
+    strikes = 0; balls = 0;
+    questionCount = 0;
   }
 
   // アウト判定
@@ -623,7 +596,7 @@ function handleResult(type) {
 
     // ストラックアウト！表示してからネクストバッターへ
     const flash = document.getElementById('result-flash');
-    flash.innerHTML = 'STRIKE OUT👍<br><span style="font-size:1.4rem;color:#fff;">NEXT BATTER⚾</span>';
+    flash.innerHTML = 'STRIKE OUT🔥<br><span style="font-size:1.4rem;color:#fff;">⚾ NEXT BATTER</span>';
     flash.style.color = '#e63946';
     setTimeout(nextQuestion, 1800);
     return;
@@ -712,13 +685,13 @@ function endGame(type) {
   const msg = document.getElementById('overlay-msg');
   overlay.classList.add('show');
   if (type === 'nice') {
-    title.textContent = 'NICE PITCH!!🏆';
+    title.textContent = '🏆 ナイスピッチ！';
     title.style.color = '#ffd60a';
-    msg.textContent = `シャットアウトした👍`;
+    msg.textContent = `シャットアウト！`;
   } else {
-    title.textContent = 'KNOCK OUT💥 ';
+    title.textContent = '💥 KNOCK OUT！';
     title.style.color = '#ff6b6b';
-    msg.textContent = `KNOCK OUT😵降板…`;
+    msg.textContent = `ノックアウト...降板です`;
   }
 }
 
@@ -733,8 +706,8 @@ function restartGame() {
 
   // グリッドをクリア
   document.getElementById('grid').innerHTML = '';
-  document.getElementById('result-flash').innerHTML = 'NEXT Batter';
-  document.getElementById('q-count').textContent = '';
+  document.getElementById('result-flash').innerHTML = '&nbsp;';
+  document.getElementById('q-count').textContent = '&nbsp;';
 
   // 問題ボックスをプレイボール表示に戻す
   document.getElementById('question-box').innerHTML =
