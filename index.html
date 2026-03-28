@@ -51,14 +51,14 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 14px;
-    padding: 10px;
+    gap: 8px;
+    padding: 6px 10px;
   }
 
   /* タイトル */
   h1 {
     font-family: 'Boogaloo', cursive;
-    font-size: 2.4rem;
+    font-size: 1.8rem;
     color: var(--white);
     text-shadow: 3px 3px 0 #0a3d62, 0 0 20px rgba(255,200,0,0.5);
     letter-spacing: 2px;
@@ -75,13 +75,13 @@
   .op-btn {
     background: var(--white);
     border: 3px solid #0a3d62;
-    border-radius: 12px;
-    padding: 8px 20px;
-    font-size: 1.4rem;
+    border-radius: 10px;
+    padding: 5px 14px;
+    font-size: 1.1rem;
     font-family: 'Boogaloo', cursive;
     cursor: pointer;
     transition: all 0.15s;
-    box-shadow: 3px 3px 0 #0a3d62;
+    box-shadow: 2px 2px 0 #0a3d62;
     color: #0a3d62;
   }
   .op-btn:hover { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 #0a3d62; }
@@ -99,21 +99,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
   }
 
   /* 問題パネル */
   #question-box {
     background: rgba(255,255,255,0.95);
     border: 4px solid #0a3d62;
-    border-radius: 18px;
-    padding: 12px 28px;
-    font-size: 2rem;
+    border-radius: 14px;
+    padding: 8px 22px;
+    font-size: 1.7rem;
     font-weight: 900;
     color: #0a3d62;
-    min-width: 260px;
+    min-width: 240px;
     text-align: center;
-    box-shadow: 4px 4px 0 #0a3d62;
+    box-shadow: 3px 3px 0 #0a3d62;
     position: relative;
   }
   #timer-bar-wrap {
@@ -135,9 +135,9 @@
   /* 結果フラッシュ */
   #result-flash {
     font-family: 'Boogaloo', cursive;
-    font-size: 2.2rem;
+    font-size: 1.8rem;
     font-weight: 900;
-    min-height: 72px;
+    min-height: 54px;
     text-align: center;
     line-height: 1.3;
     text-shadow: 2px 2px 0 rgba(0,0,0,0.3);
@@ -156,18 +156,18 @@
   #grid {
     display: grid;
     grid-template-columns: repeat(3,1fr);
-    gap: 8px;
+    gap: 6px;
   }
   .cell {
-    width: 88px;
-    height: 88px;
+    width: 78px;
+    height: 78px;
     background: var(--cell-bg);
     border: 3px solid var(--cell-border);
-    border-radius: 14px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 900;
     color: #2d3436;
     cursor: pointer;
@@ -186,13 +186,13 @@
   #scoreboard {
     background: rgba(10, 61, 20, 0.92);
     border: 3px solid var(--white);
-    border-radius: 18px;
-    padding: 14px 16px;
-    min-width: 130px;
+    border-radius: 14px;
+    padding: 10px 12px;
+    min-width: 120px;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 12px;
+    gap: 8px;
     box-shadow: 4px 4px 0 rgba(0,0,0,0.3);
   }
 
@@ -277,7 +277,75 @@
     50% { box-shadow: 4px 4px 0 #e85d04, 0 0 18px rgba(255,214,10,0.6); }
   }
 
-  /* オーバーレイ */
+  /* モード切替 */
+  #mode-select {
+    display: flex;
+    gap: 8px;
+  }
+  .mode-btn {
+    font-family: 'Boogaloo', cursive;
+    font-size: 1.1rem;
+    padding: 6px 18px;
+    border: 3px solid #0a3d62;
+    border-radius: 10px;
+    background: var(--white);
+    color: #0a3d62;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #0a3d62;
+    transition: all 0.15s;
+  }
+  .mode-btn.active { background: #ffd60a; border-color: #e85d04; box-shadow: 2px 2px 0 #e85d04; }
+
+  /* 10キーエリア */
+  #tenkey-area { display: none; flex-direction: column; align-items: center; gap: 5px; }
+  #tenkey-area.show { display: flex; }
+
+  /* 入力表示 */
+  #tenkey-display {
+    background: rgba(255,255,255,0.95);
+    border: 3px solid #0a3d62;
+    border-radius: 10px;
+    padding: 6px 14px;
+    font-family: 'Boogaloo', cursive;
+    font-size: 1.6rem;
+    font-weight: 900;
+    color: #0a3d62;
+    min-width: 110px;
+    text-align: right;
+    letter-spacing: 2px;
+    box-shadow: 2px 2px 0 #0a3d62;
+  }
+  #tenkey-display.correct { background: #06d6a0; color: white; border-color: #029a72; }
+  #tenkey-display.wrong   { background: #e63946; color: white; border-color: #9b1c1c; }
+
+  /* 10キーグリッド */
+  #tenkey-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+  }
+  .tk-btn {
+    width: 64px; height: 64px;
+    background: var(--cell-bg);
+    border: 3px solid var(--cell-border);
+    border-radius: 10px;
+    font-family: 'Boogaloo', cursive;
+    font-size: 1.4rem;
+    font-weight: 900;
+    color: #2d3436;
+    cursor: pointer;
+    box-shadow: 3px 3px 0 var(--cell-border);
+    transition: all 0.1s;
+    user-select: none;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .tk-btn:hover:not(.disabled) { transform: translate(-2px,-2px); box-shadow: 5px 5px 0 var(--cell-border); }
+  .tk-btn.tk-del  { background: #ffeaa7; border-color: #f0b429; color: #856404; box-shadow: 3px 3px 0 #f0b429; }
+  .tk-btn.tk-enter{ background: #0a3d62; border-color: #051d31; color: white;  box-shadow: 3px 3px 0 #051d31; font-size: 1.1rem; }
+  .tk-btn.tk-zero { grid-column: span 1; }
+  .tk-btn.disabled { opacity: 0.5; cursor: default; }
+
+
   #overlay {
     position: fixed;
     inset: 0;
@@ -331,6 +399,12 @@
 <div id="game-wrapper">
   <h1>⚾ <span>8Q</span> ⚾</h1>
 
+  <!-- モード切替 -->
+  <div id="mode-select">
+    <button class="mode-btn active" data-mode="opt" onclick="setMode('opt')">OPT</button>
+    <button class="mode-btn" data-mode="tenkey" onclick="setMode('tenkey')">10キー</button>
+  </div>
+
   <!-- 演算選択 -->
   <div id="op-select">
     <button class="op-btn active" data-op="+">たし算 ＋</button>
@@ -348,8 +422,27 @@
         <div id="timer-bar-wrap"><div id="timer-bar"></div></div>
       </div>
       <div id="result-flash">&nbsp;</div>
-      <!-- 9マス -->
+      <!-- 9マス（OPTモード） -->
       <div id="grid"></div>
+
+      <!-- 10キー（10キーモード） -->
+      <div id="tenkey-area">
+        <div id="tenkey-display">―</div>
+        <div id="tenkey-grid">
+          <button class="tk-btn" onclick="tkInput(7)">7</button>
+          <button class="tk-btn" onclick="tkInput(8)">8</button>
+          <button class="tk-btn" onclick="tkInput(9)">9</button>
+          <button class="tk-btn" onclick="tkInput(4)">4</button>
+          <button class="tk-btn" onclick="tkInput(5)">5</button>
+          <button class="tk-btn" onclick="tkInput(6)">6</button>
+          <button class="tk-btn" onclick="tkInput(1)">1</button>
+          <button class="tk-btn" onclick="tkInput(2)">2</button>
+          <button class="tk-btn" onclick="tkInput(3)">3</button>
+          <button class="tk-btn tk-del" onclick="tkDel()">DEL</button>
+          <button class="tk-btn tk-zero" onclick="tkInput(0)">0</button>
+          <button class="tk-btn tk-enter" onclick="tkEnter()">ENT</button>
+        </div>
+      </div>
       <div id="q-count">&nbsp;</div>
     </div>
 
@@ -400,14 +493,16 @@
 
 <!-- ゲームオーバー / クリアオーバーレイ -->
 <div id="overlay">
-  <h2 id="overlay-title">NICE Pitch 🎊</h2>
-  <p id="overlay-msg">素晴らしい！</p>
-  <button onclick="restartGame()">🔄 NEXT Batter </button>
+  <h2 id="overlay-title">NICE PITCH！</h2>
+  <p id="overlay-msg">素晴らしい🎊</p>
+  <button onclick="restartGame()">🔄 NEXT Batter</button>
 </div>
 
 <script>
 // ===== 状態 =====
 let op = '+';
+let inputMode = 'opt'; // 'opt' or 'tenkey'
+let tkValue = '';      // 10キー入力中の文字列
 let strikes = 0, balls = 0;
 let outs = 0, hits = 0;
 let questionCount = 0; // 現在の7問カウント
@@ -426,7 +521,65 @@ document.querySelectorAll('.op-btn').forEach(btn => {
   });
 });
 
-// ===== プレイボールボックス（スタート兼用） =====
+// ===== モード切替 =====
+function setMode(mode) {
+  inputMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+  // ゲーム中でなければ表示切替のみ
+  if (!gameActive) {
+    document.getElementById('grid').style.display = mode === 'opt' ? '' : 'none';
+    document.getElementById('tenkey-area').classList.toggle('show', mode === 'tenkey');
+  }
+}
+
+// ===== 10キー操作 =====
+function tkInput(num) {
+  if (cellsDisabled || !gameActive) return;
+  if (tkValue.length >= 4) return; // 最大4桁
+  tkValue += String(num);
+  document.getElementById('tenkey-display').textContent = tkValue;
+}
+
+function tkDel() {
+  if (cellsDisabled || !gameActive) return;
+  tkValue = tkValue.slice(0, -1);
+  document.getElementById('tenkey-display').textContent = tkValue || '―';
+}
+
+function tkEnter() {
+  if (cellsDisabled || !gameActive) return;
+  if (tkValue === '') return;
+  const val = parseInt(tkValue);
+  tkValue = '';
+  cellsDisabled = true;
+  clearTimer();
+
+  // 正誤判定
+  const disp = document.getElementById('tenkey-display');
+  if (val === correctAnswer) {
+    disp.classList.add('correct');
+    disp.textContent = '✓ ' + val;
+    handleResult('strike');
+  } else {
+    disp.classList.add('wrong');
+    disp.textContent = '✗ ' + val;
+    handleResult('hit');
+  }
+}
+
+// ===== 10キー表示リセット =====
+function resetTenkey() {
+  tkValue = '';
+  const disp = document.getElementById('tenkey-display');
+  if (disp) {
+    disp.textContent = '―';
+    disp.className = '';
+  }
+}
+
+
 function handleQBoxClick() {
   if (!gameActive) startGame();
 }
@@ -496,16 +649,26 @@ function nextQuestion() {
   document.getElementById('result-flash').innerHTML = '&nbsp;';
   document.getElementById('q-count').textContent = `問題 ${questionCount} / 7`;
 
-  const choices = genChoices(ans);
-  const grid = document.getElementById('grid');
-  grid.innerHTML = '';
-  choices.forEach(c => {
-    const cell = document.createElement('div');
-    cell.className = 'cell';
-    cell.textContent = c;
-    cell.addEventListener('click', () => onAnswer(c, cell));
-    grid.appendChild(cell);
-  });
+  if (inputMode === 'opt') {
+    document.getElementById('grid').style.display = '';
+    document.getElementById('tenkey-area').classList.remove('show');
+    const choices = genChoices(ans);
+    const grid = document.getElementById('grid');
+    grid.innerHTML = '';
+    choices.forEach(c => {
+      const cell = document.createElement('div');
+      cell.className = 'cell';
+      cell.textContent = c;
+      cell.addEventListener('click', () => onAnswer(c, cell));
+      grid.appendChild(cell);
+    });
+  } else {
+    document.getElementById('grid').style.display = 'none';
+    document.getElementById('tenkey-area').classList.add('show');
+    resetTenkey();
+    // 10キーボタンを有効化
+    document.querySelectorAll('.tk-btn').forEach(b => b.classList.remove('disabled'));
+  }
 
   startTime = Date.now();
   startTimerBar();
@@ -525,10 +688,17 @@ function startTimerBar() {
       // 時間切れ → ボール
       if (!cellsDisabled) {
         cellsDisabled = true;
-        document.querySelectorAll('.cell').forEach(c => {
-          c.classList.add('disabled');
-          if (parseInt(c.textContent) === correctAnswer) c.classList.add('correct');
-        });
+        if (inputMode === 'opt') {
+          document.querySelectorAll('.cell').forEach(c => {
+            c.classList.add('disabled');
+            if (parseInt(c.textContent) === correctAnswer) c.classList.add('correct');
+          });
+        } else {
+          document.querySelectorAll('.tk-btn').forEach(b => b.classList.add('disabled'));
+          const disp = document.getElementById('tenkey-display');
+          disp.textContent = '→ ' + correctAnswer;
+          disp.className = 'correct';
+        }
         handleResult('ball');
       }
     }
@@ -564,7 +734,7 @@ function onAnswer(value, cell) {
 function handleResult(type) {
   const flash = document.getElementById('result-flash');
   if (type === 'strike') {
-    flash.textContent = 'STRIKE！👍';
+    flash.textContent = 'STRIKE👍';
     flash.style.color = '#ffd60a';
     strikes++;
   } else if (type === 'ball') {
@@ -572,7 +742,7 @@ function handleResult(type) {
     flash.style.color = '#06d6a0';
     balls++;
   } else {
-    flash.textContent = 'HIT💣';
+    flash.textContent = 'HIT😵';
     flash.style.color = '#ff6b6b';
     hits++;
     strikes = 0; balls = 0;
@@ -607,7 +777,7 @@ function handleResult(type) {
     strikes = 0; balls = 0;
     hits++;
     questionCount = 0;
-    setTimeout(() => showMini('フォアボール 😵', '#f72585'), 100);
+    setTimeout(() => showMini('フォアボール😓', '#f72585'), 100);
   }
 
   updateScoreboard();
@@ -685,13 +855,13 @@ function endGame(type) {
   const msg = document.getElementById('overlay-msg');
   overlay.classList.add('show');
   if (type === 'nice') {
-    title.textContent = '🏆 ナイスピッチ！';
+    title.textContent = '🏆 NICE PITCH！';
     title.style.color = '#ffd60a';
-    msg.textContent = `シャットアウト！`;
+    msg.textContent = `シャットアウト！完璧な投球だ！`;
   } else {
     title.textContent = '💥 KNOCK OUT！';
     title.style.color = '#ff6b6b';
-    msg.textContent = `ノックアウト...降板です`;
+    msg.textContent = `ノックアウト！降板だ…`;
   }
 }
 
@@ -704,10 +874,13 @@ function restartGame() {
   updateOutCircles();
   updateDiamond();
 
-  // グリッドをクリア
+  // グリッド・10キーをクリア
   document.getElementById('grid').innerHTML = '';
-  document.getElementById('result-flash').innerHTML = 'NEXT_Batter';
-  document.getElementById('q-count').textContent = '';
+  resetTenkey();
+  document.getElementById('tenkey-area').classList.remove('show');
+  document.getElementById('grid').style.display = '';
+  document.getElementById('result-flash').innerHTML = '&nbsp;';
+  document.getElementById('q-count').textContent = '&nbsp;';
 
   // 問題ボックスをプレイボール表示に戻す
   document.getElementById('question-box').innerHTML =
