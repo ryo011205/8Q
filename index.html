@@ -423,8 +423,8 @@
 
   <!-- 試合/練習モード切替 -->
   <div id="gamemode-select">
-    <button class="gamemode-btn"        data-gm="practice" onclick="setGameMode('practice')">投球練習 🎯</button>
-    <button class="gamemode-btn active" data-gm="match"    onclick="setGameMode('match')">試合 ⚾️</button>
+    <button class="gamemode-btn"        data-gm="practice" onclick="setGameMode('practice')">🙋‍♂️ 投球練習</button>
+    <button class="gamemode-btn active" data-gm="match"    onclick="setGameMode('match')"> 試合 🔥</button>
   </div>
 
   <!-- モード切替 -->
@@ -506,7 +506,7 @@
 
       <div class="divider"></div>
 
-      <div class="diamond-label"> HIT 💣</div>
+      <div class="diamond-label">ランナー 🏃</div>
       <div class="diamond-field">
         <div class="base second" id="base2"></div>
         <div class="base third"  id="base3"></div>
@@ -522,8 +522,8 @@
 <!-- ゲームオーバー / クリアオーバーレイ -->
 <div id="overlay">
   <h2 id="overlay-title">NICE Pitch！</h2>
-  <p id="overlay-msg">シャットアウト！</p>
-  <button onclick="restartGame()">🔄 NEXT inning </button>
+  <p id="overlay-msg">素晴らしい👏</p>
+  <button onclick="restartGame()">🔄 NEXT inning</button>
 </div>
 
 <script>
@@ -715,12 +715,6 @@ function nextQuestion() {
 
 // ===== タイマーバー =====
 function startTimerBar() {
-  // 練習モードはタイマーなし（バー満タンのまま）
-  if (gameMode === 'practice') {
-    const bar = document.getElementById('timer-bar');
-    if (bar) bar.style.width = '100%';
-    return;
-  }
   const duration = gameMode === 'practice' ? 6000 : 3000;
   const bar = () => document.getElementById('timer-bar');
   let elapsed = 0;
@@ -779,15 +773,15 @@ function onAnswer(value, cell) {
 function handleResult(type) {
   const flash = document.getElementById('result-flash');
   if (type === 'strike') {
-    flash.textContent = ' STRIKE 👍';
+    flash.textContent = 'STRIKE 👍';
     flash.style.color = '#ffd60a';
     strikes++;
   } else if (type === 'ball') {
-    flash.textContent = ' BALL 🫷';
+    flash.textContent = 'BALL 🫷';
     flash.style.color = '#06d6a0';
     balls++;
   } else {
-    flash.textContent = ' HIT 💣';
+    flash.textContent = 'HIT 💣';
     flash.style.color = '#ff6b6b';
     hits++; strikes = 0; balls = 0; questionCount = 0;
   }
@@ -809,7 +803,7 @@ function handleResult(type) {
 
     // ストラックアウト！表示してからネクストバッターへ
     const flash = document.getElementById('result-flash');
-    flash.innerHTML = 'STRIKE OUT 💪<br><span style="font-size:1.4rem;color:#fff;">⚾ NEXT BATTER</span>';
+    flash.innerHTML = 'STRIKE OUT 👍<br><span style="font-size:1.4rem;color:#fff;">⚾ NEXT BATTER</span>';
     flash.style.color = '#e63946';
     setTimeout(nextQuestion, 1800);
     return;
@@ -820,7 +814,7 @@ function handleResult(type) {
     strikes = 0; balls = 0;
     hits++;
     questionCount = 0;
-    setTimeout(() => showMini('四球ヒット！', '#f72585'), 100);
+    setTimeout(() => showMini('フォアボール 😓', '#f72585'), 100);
   }
 
   updateScoreboard();
@@ -898,13 +892,13 @@ function endGame(type) {
   const msg = document.getElementById('overlay-msg');
   overlay.classList.add('show');
   if (type === 'nice') {
-    title.textContent = 'NICE Pitch！ 👏';
+    title.textContent = 'NICE Pitch 👏';
     title.style.color = '#ffd60a';
-    msg.textContent = `シャットアウト！`;
+    msg.textContent = `シャットアウト！完璧だ！`;
   } else {
-    title.textContent = ' KNOCK OUT 💥';
+    title.textContent = 'KNOCK OUT 💥';
     title.style.color = '#ff6b6b';
-    msg.textContent = `ノックアウト😵…降板だ…`;
+    msg.textContent = `失点した…降板だ😵`;
   }
 }
 
@@ -927,7 +921,7 @@ function restartGame() {
 
   // 問題ボックスをプレイボール表示に戻す
   document.getElementById('question-box').innerHTML =
-    `➡️ NEXT inning<div id="timer-bar-wrap"><div id="timer-bar" style="width:100%"></div></div>`;
+    `⚾ プレイボール 🫵<div id="timer-bar-wrap"><div id="timer-bar" style="width:100%"></div></div>`;
   document.getElementById('question-box').classList.add('waiting');
 
   // オーバーレイを閉じる
