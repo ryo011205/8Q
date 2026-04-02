@@ -277,6 +277,28 @@
     50% { box-shadow: 4px 4px 0 #e85d04, 0 0 18px rgba(255,214,10,0.6); }
   }
 
+  /* 試合/練習モード切替 */
+  #gamemode-select {
+    display: flex;
+    gap: 8px;
+  }
+  .gamemode-btn {
+    font-family: 'Boogaloo', cursive;
+    font-size: 1.1rem;
+    padding: 6px 18px;
+    border: 3px solid #0a3d62;
+    border-radius: 10px;
+    background: var(--white);
+    color: #0a3d62;
+    cursor: pointer;
+    box-shadow: 2px 2px 0 #0a3d62;
+    transition: all 0.15s;
+  }
+  .gamemode-btn.active { background: #e85d04; border-color: #c44200; color: white; box-shadow: 2px 2px 0 #c44200; }
+
+  /* 練習モード時：問題カウントを強調 */
+  body.practice #q-count { color: #ffd60a; font-size: 1rem; }
+
   /* モード切替 */
   #mode-select {
     display: flex;
@@ -399,6 +421,12 @@
 <div id="game-wrapper">
   <h1>⚾ <span>8Q</span> ⚾</h1>
 
+  <!-- 試合/練習モード切替 -->
+  <div id="gamemode-select">
+    <button class="gamemode-btn"        data-gm="practice" onclick="setGameMode('practice')">投球練習 🎯</button>
+    <button class="gamemode-btn active" data-gm="match"    onclick="setGameMode('match')">試合 ⚾️</button>
+  </div>
+
   <!-- モード切替 -->
   <div id="mode-select">
     <button class="mode-btn active" data-mode="opt" onclick="setMode('opt')">OPT</button>
@@ -478,7 +506,7 @@
 
       <div class="divider"></div>
 
-      <div class="diamond-label">ランナー</div>
+      <div class="diamond-label"> HIT 💣</div>
       <div class="diamond-field">
         <div class="base second" id="base2"></div>
         <div class="base third"  id="base3"></div>
@@ -493,15 +521,16 @@
 
 <!-- ゲームオーバー / クリアオーバーレイ -->
 <div id="overlay">
-  <h2 id="overlay-title">NICE PITCH！</h2>
-  <p id="overlay-msg">素晴らしい🎊</p>
-  <button onclick="restartGame()">🔄 NEXT inning</button>
+  <h2 id="overlay-title">NICE Pitch！</h2>
+  <p id="overlay-msg">シャットアウト！</p>
+  <button onclick="restartGame()">🔄 NEXT inning </button>
 </div>
 
 <script>
 // ===== 状態 =====
 let op = '+';
 let inputMode = 'opt'; // 'opt' or 'tenkey'
+let gameMode  = 'match'; // 'match'(試合) or 'practice'(練習)
 let tkValue = '';      // 10キー入力中の文字列
 let strikes = 0, balls = 0;
 let outs = 0, hits = 0;
@@ -520,6 +549,15 @@ document.querySelectorAll('.op-btn').forEach(btn => {
     op = btn.dataset.op;
   });
 });
+
+// ===== 試合/練習モード切替 =====
+function setGameMode(mode) {
+  gameMode = mode;
+  document.querySelectorAll('.gamemode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.gm === mode);
+  });
+  document.body.classList.toggle('practice', mode === 'practice');
+}
 
 // ===== モード切替 =====
 function setMode(mode) {
@@ -647,7 +685,8 @@ function nextQuestion() {
     `<span>${a} ${opSymbol} ${b}</span>
      <div id="timer-bar-wrap"><div id="timer-bar"></div></div>`;
   document.getElementById('result-flash').innerHTML = '&nbsp;';
-  document.getElementById('q-count').textContent = `問題 ${questionCount} / 7`;
+  document.getElementById('q-count').textContent =
+    gameMode === 'practice' ? `問題 ${questionCount}` : `問題 ${questionCount} / 7`;
 
   if (inputMode === 'opt') {
     document.getElementById('grid').style.display = '';
@@ -676,7 +715,13 @@ function nextQuestion() {
 
 // ===== タイマーバー =====
 function startTimerBar() {
-  const duration = 3000; // 3秒
+  // 練習モードはタイマーなし（バー満タンのまま）
+  if (gameMode === 'practice') {
+    const bar = document.getElementById('timer-bar');
+    if (bar) bar.style.width = '100%';
+    return;
+  }
+  const duration = gameMode === 'practice' ? 6000 : 3000;
   const bar = () => document.getElementById('timer-bar');
   let elapsed = 0;
   timerInterval = setInterval(() => {
@@ -734,19 +779,17 @@ function onAnswer(value, cell) {
 function handleResult(type) {
   const flash = document.getElementById('result-flash');
   if (type === 'strike') {
-    flash.textContent = 'STRIKE👍';
+    flash.textContent = ' STRIKE 👍';
     flash.style.color = '#ffd60a';
     strikes++;
   } else if (type === 'ball') {
-    flash.textContent = 'BALL✋';
+    flash.textContent = ' BALL 🫷';
     flash.style.color = '#06d6a0';
     balls++;
   } else {
-    flash.textContent = 'HIT😵';
+    flash.textContent = ' HIT 💣';
     flash.style.color = '#ff6b6b';
-    hits++;
-    strikes = 0; balls = 0;
-    questionCount = 0;
+    hits++; strikes = 0; balls = 0; questionCount = 0;
   }
 
   // アウト判定
@@ -766,7 +809,7 @@ function handleResult(type) {
 
     // ストラックアウト！表示してからネクストバッターへ
     const flash = document.getElementById('result-flash');
-    flash.innerHTML = 'STRIKE OUT🔥<br><span style="font-size:1.4rem;color:#fff;">⚾ NEXT BATTER</span>';
+    flash.innerHTML = 'STRIKE OUT 💪<br><span style="font-size:1.4rem;color:#fff;">⚾ NEXT BATTER</span>';
     flash.style.color = '#e63946';
     setTimeout(nextQuestion, 1800);
     return;
@@ -777,7 +820,7 @@ function handleResult(type) {
     strikes = 0; balls = 0;
     hits++;
     questionCount = 0;
-    setTimeout(() => showMini('フォアボール😓', '#f72585'), 100);
+    setTimeout(() => showMini('四球ヒット！', '#f72585'), 100);
   }
 
   updateScoreboard();
@@ -855,13 +898,13 @@ function endGame(type) {
   const msg = document.getElementById('overlay-msg');
   overlay.classList.add('show');
   if (type === 'nice') {
-    title.textContent = '🏆 NICE PITCH！';
+    title.textContent = 'NICE Pitch！ 👏';
     title.style.color = '#ffd60a';
-    msg.textContent = `シャットアウト！完璧な投球だ！`;
+    msg.textContent = `シャットアウト！`;
   } else {
-    title.textContent = '💥 KNOCK OUT！';
+    title.textContent = ' KNOCK OUT 💥';
     title.style.color = '#ff6b6b';
-    msg.textContent = `ノックアウト！降板だ…`;
+    msg.textContent = `ノックアウト😵…降板だ…`;
   }
 }
 
@@ -884,7 +927,7 @@ function restartGame() {
 
   // 問題ボックスをプレイボール表示に戻す
   document.getElementById('question-box').innerHTML =
-    `⚾ プレイボール 🫵<div id="timer-bar-wrap"><div id="timer-bar" style="width:100%"></div></div>`;
+    `➡️ NEXT inning<div id="timer-bar-wrap"><div id="timer-bar" style="width:100%"></div></div>`;
   document.getElementById('question-box').classList.add('waiting');
 
   // オーバーレイを閉じる
